@@ -63,14 +63,14 @@ def create_chirp(
     return time, signal, ampl, freq
 
 
-def chirp_envelope(time, signal, prominence=0.1, plot=True):
+def chirp_envelope(time, signal, prominence=0.1, distance=1, plot=True):
     # solves the assignment by scipy signal peak detection
 
     ## rectification
     signal_rec = signal.clip(min=0)
 
     # peak detection
-    peaks, _ = find_peaks(signal_rec, prominence)
+    peaks, _ = find_peaks(signal_rec, prominence=prominence, distance=distance)
 
     # cubic spline interpolation
     tck = interpolate.splrep(time[peaks], signal_rec[peaks], s=0)
@@ -131,12 +131,31 @@ def chirp_envelope2(time, signal, plot=True):
 # 2. Peak detection
 # 3. Cubic interpolation between peaks
 
+eodf = 500
+chirpsize = 100
+chirpduration = 0.015
+ampl_reduction = 0.2
+chirptimes = [0.05, 0.2]
+kurtosis = 1.0
+duration = 1.0
+dt = 0.00001
 
 # simulate data
-time, signal, ampl, freq = create_chirp()
+time, signal, ampl, freq = create_chirp(
+    eodf, chirpsize, chirpduration, ampl_reduction, chirptimes, kurtosis, duration, dt
+)
+
+eodf_rec = eodf * 2.02
+eod = np.sin(2 * np.pi * eodf_rec * time)
+mixed = eod + signal * 0.2
+plt.plot(time, mixed)
+plt.show()
 
 # get envelope
 peaks1, envelope1 = chirp_envelope(time, signal)
+_, _ = chirp_envelope(time, mixed, distance=int(1 / eodf / dt * 0.9))
+
 
 # get alternative solution
 peaks2, envelope2 = chirp_envelope2(time, signal)
+_, _ = chirp_envelope2(time, mixed)
