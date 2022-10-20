@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from IPython import embed
 from scipy import interpolate
 
 
@@ -159,8 +160,10 @@ beat, envelope, envelope_time = beat_envelope(
 )
 
 # plot beat, maxima and envelope
-fig, ax = plt.subplots()
-ax.plot(time, beat)
-ax.plot(time[peaks], beat[peaks], "ro")
-ax.plot(env_time, envelope)
+fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, constrained_layout=True, sharex=True)
+ax1.plot(time, eod_send)
+ax2.plot(time, eod_rec)
+ax3.plot(time, beat, alpha=0.5)
+ax3.plot(envelope_time, envelope, lw=2)
+ax3.set_xlim(0.02, 0.15)
 plt.show()
