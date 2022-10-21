@@ -2,7 +2,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,visualstudiocode,linux,latex
 
 # Self added stuff
-data
+data/*
+stimuli/*
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
