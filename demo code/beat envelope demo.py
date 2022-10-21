@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from IPython import embed
 from scipy import interpolate
 
 
@@ -108,17 +107,18 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
 
     # find where rectified lower EOD is now 0
     idx = np.arange(len(lower_eod_rect))
-    zero_idx = idx[lower_eod_rect != 0]
+    nonzero_idx = idx[lower_eod_rect != 0]
 
     # find gaps of continuity in index array
-    lowers = (zero_idx + 1)[:-1]
-    uppers = (zero_idx - 1)[1:]
+    lowers = (nonzero_idx + 1)[:-1]
+    uppers = (nonzero_idx - 1)[1:]
     mask = lowers <= uppers
     upperbounds, lowerbounds = uppers[mask], lowers[mask]
 
     # calculate maxima in non-zero areas
     peaks = []
-    for upper, lower in zip(upperbounds[0:-2], lowerbounds[1:-1]):
+
+    for upper, lower in zip(upperbounds[:-1], lowerbounds[1:]):
 
         # make ranges from boundaries
         bounds = np.arange(upper, lower)
@@ -142,9 +142,10 @@ dt = 0.00001
 
 # receiver eod parameters
 eodf_rec = eodf_send * 2.05
+eod_rec_amp = 1.0
 
 # make sender eod
-time, eod_send, ampl, freq = create_chirp(
+time, eod_send, _, _ = create_chirp(
     eodf=eodf_send,
     chirpsize=chirpsize,
     chirpduration=chirpduration,
@@ -153,7 +154,7 @@ time, eod_send, ampl, freq = create_chirp(
 )
 
 # make receiver eod
-eod_rec = np.sin(2 * np.pi * eodf_rec * time)
+eod_rec = eod_rec_amp * np.sin(2 * np.pi * eodf_rec * time)
 
 beat, envelope, envelope_time = beat_envelope(
     eod_send, eod_rec, eodf_send, eodf_rec, time
@@ -165,5 +166,7 @@ ax1.plot(time, eod_send)
 ax2.plot(time, eod_rec)
 ax3.plot(time, beat, alpha=0.5)
 ax3.plot(envelope_time, envelope, lw=2)
+
 ax3.set_xlim(0.02, 0.15)
+
 plt.show()
