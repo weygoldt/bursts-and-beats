@@ -167,6 +167,6 @@ ax2.plot(time, eod_rec)
 ax3.plot(time, beat, alpha=0.5)
 ax3.plot(envelope_time, envelope, lw=2)
 
-ax3.set_xlim(0.02, 0.15)
+# ax3.set_xlim(0.02, 0.15)
 
 plt.show()

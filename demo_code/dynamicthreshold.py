@@ -32,7 +32,7 @@ v_mean = np.mean(v_filt)
 spike_amp = spike_v - v_mean
 
 # scale dynamic threshold and apply median filter
-thresh_amp = spike_amp * 0.1
+thresh_amp = spike_amp * 0.3
 thresh = v_mean + thresh_amp
 thresh = medfilt(thresh, 51)
 

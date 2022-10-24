@@ -72,11 +72,8 @@ for isi_index in isi_indices:
 burst_time_indices = [fs.find_closest(t, x) for x in spike_times[burst_spikes]]
 single_time_indices = [fs.find_closest(t, x) for x in spike_times[single_spikes]]
 
-# find gaps of continuity in index array
-lowers = (np.array(burst_spikes) + 1)[:-1]
-uppers = (np.array(burst_spikes) - 1)[1:]
-mask = lowers <= uppers
-upperbounds, lowerbounds = uppers[mask], lowers[mask]
+diffs = np.diff(burst_spikes)
+gaps = np.where(diffs != 1)[0]
 
 # plot
 plt.plot(t, v)
@@ -93,9 +90,8 @@ plt.scatter(
     marker="|",
 )
 plt.scatter(
-    spike_times[burst_spikes],
-    np.ones_like(spike_times[burst_spikes]) - 19,
-    color="blue",
-    marker="o",
+    spike_times[np.array(burst_spikes)[gaps]],
+    np.ones_like(spike_times[np.array(burst_spikes)[gaps]]) - 19,
+    color="cornflowerblue",
 )
 plt.show()
