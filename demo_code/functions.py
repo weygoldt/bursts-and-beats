@@ -292,3 +292,20 @@ def find_closest(array, target):
     right = array[idx]
     idx -= target - left < right - target
     return idx
+
+
+def flatten(l):
+    """
+    Flattens a list / array of lists.
+
+    Parameters
+    ----------
+    l : array or list of lists
+        The list to be flattened
+
+    Returns
+    -------
+    list
+        The flattened list
+    """
+    return [item for sublist in l for item in sublist]
