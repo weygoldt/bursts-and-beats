@@ -1,5 +1,8 @@
 import numpy as np
 from scipy import interpolate
+from scipy.signal import butter, sosfiltfilt
+
+# Data simulation
 
 
 def create_chirp(
@@ -59,6 +62,9 @@ def create_chirp(
         signal[k] = a * np.sin(2 * np.pi * p)
 
     return time, signal, ampl, freq
+
+
+# Data manipulation
 
 
 def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
@@ -129,3 +135,160 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     envelope_time = time[peaks[0] : peaks[-1]]
 
     return beat, envelope, envelope_time
+
+
+# Interspike interval functions
+
+
+def isis(spike_times):
+    """
+    Compute interspike intervals of spike times per recording trial.
+
+    Parameters
+    ----------
+    spike_times : array-like of arrays
+        A list/array of trials containing spike times
+
+    Returns
+    -------
+    isiarray : array of float
+        Interspike intervals
+    """
+
+    isiarray = []
+    for times in spike_times:
+        difftimes = np.diff(times)
+        isiarray.append(difftimes)
+
+    return isiarray
+
+
+def isih(isis, bin_width):
+    """
+    isih computes the probability density function of the interspike intervals.
+
+    Parameters
+    ----------
+    isis : bool
+        _description_
+    bin_width : _type_
+        _description_
+
+    Returns
+    -------
+    _type_
+        _description_
+    """
+
+    bins = np.arange(0.0, np.max(isis) + bin_width, bin_width)
+    counts, edges = np.histogram(isis, bins)
+    centers = edges[:-1] + 0.5 * bin_width
+    pdf = counts / np.sum(counts) / bin_width
+
+    return pdf, centers
+
+
+def plot_isih(ax, isis, binwidth):
+    """
+    Plot the interspike interval histogram.
+
+    Parameters
+    ----------
+    ax : matplotlib axis
+    isis : 1d-array of floats
+        The interspike intervals
+    binwidth : float
+        Bin width to be used for the histogram
+    """
+
+    pdf, centers = isih(isis, binwidth)
+
+    # compute histogram
+    misi = np.mean(isis)
+
+    # basic statistics
+    sdisi = np.std(isis)
+    cv = sdisi / misi
+    ax.bar(centers * 1000, pdf, width=binwidth * 1000)  # plot histogram with ISIs in ms
+
+    ax.set_xlabel("Interspike interval [ms]")
+    ax.set_ylabel("p(ISI) [1/s]")
+
+    # annotate plot with relative coordinates (0-1, transform argument):
+    # f-string to put variables values directly into the string (within {}).
+    # r-string: no need to escape backslashes.
+    # Matplotlib math mode enclosed in '$' supports LaTeX style typesetting.
+    # In math-mode greek letters are available by their name with backslash.
+    # Subscripts are introduced by '_' and are enclosed in curly brackets.
+    # Since we are in an f-string we need to double the curly brackets.
+
+    ax.text(0.8, 0.9, rf"$\mu_{{ISI}}={misi*1000:.1f}$ms", transform=ax.transAxes)
+    ax.text(0.8, 0.8, rf"$\sigma_{{ISI}}={sdisi*1000:.1f}$ms", transform=ax.transAxes)
+    ax.text(0.8, 0.7, rf"CV={cv:.2f}", transform=ax.transAxes)
+
+
+def isi_serialcorr(isis, max_lag=10):
+    """
+    Serial correlations of interspike intervals
+
+    Parameters
+    ----------
+    isis : 1d-array of floats
+        Interspike intervals
+    max_lag : int, optional
+        Maximum lag, by default 10
+
+    Returns
+    -------
+    isicorr : array of floats
+        Interspike interval correlations
+    lags : array of integers
+        Lags of interval correlations
+    """
+
+    lags = np.arange(max_lag + 1)
+    isicorr = np.zeros(len(lags))
+    nisis = len(isis)
+    for k in range(len(lags)):  # for each lag
+        lag = lags[k]
+        if nisis > lag + 10:
+            # ensure "enough" data
+            isicorr[k] = np.corrcoef(isis[: nisis - lag], isis[lag:])[0, 1]
+    return isicorr, lags
+
+
+# Filters
+
+
+def bandpass_filter(data, rate, flow, fhigh, order=1):
+    sos = butter(order, [flow, fhigh], btype="band", fs=rate, output="sos")
+    y = sosfiltfilt(sos, data)
+    return y
+
+
+# Other
+
+
+def find_closest(array, target):
+    """Takes an array and a target and returns an index for a value of the array that matches the target most closely.
+
+    Could also work with multiple targets and may not work for unsorted arrays, i.e. where a value occurs multiple times. Primarily used for time vectors.
+
+    Parameters
+    ----------
+    array : array, required
+        The array to search in.
+    target : float, required
+        The number that needs to be found in the array.
+
+    Returns
+    ----------
+    idx : array,
+        Index for the array where the closes value to target is.
+    """
+    idx = array.searchsorted(target)
+    idx = np.clip(idx, 1, len(array) - 1)
+    left = array[idx - 1]
+    right = array[idx]
+    idx -= target - left < right - target
+    return idx
