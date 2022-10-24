@@ -1,5 +1,8 @@
 import numpy as np
 from scipy import interpolate
+from scipy.signal import butter, sosfiltfilt
+
+# Data simulation
 
 
 def create_chirp(
@@ -59,6 +62,9 @@ def create_chirp(
         signal[k] = a * np.sin(2 * np.pi * p)
 
     return time, signal, ampl, freq
+
+
+# Data manipulation
 
 
 def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
@@ -129,6 +135,9 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     envelope_time = time[peaks[0] : peaks[-1]]
 
     return beat, envelope, envelope_time
+
+
+# Interspike interval functions
 
 
 def isis(spike_times):
@@ -246,3 +255,12 @@ def isi_serialcorr(isis, max_lag=10):
             # ensure "enough" data
             isicorr[k] = np.corrcoef(isis[: nisis - lag], isis[lag:])[0, 1]
     return isicorr, lags
+
+
+# Filters
+
+
+def bandpass_filter(data, rate, flow, fhigh, order=1):
+    sos = butter(order, [flow, fhigh], btype="band", fs=rate, output="sos")
+    y = sosfiltfilt(sos, data)
+    return y
