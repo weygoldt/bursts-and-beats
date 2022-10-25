@@ -6,10 +6,13 @@ from IPython import embed
 import functions as fs
 
 # load data
-d = rlx.Dataset("../data/2022-10-20-ab-invivo-1.nix")
+d = rlx.Dataset("data/2022-10-20-ad-invivo-1.nix")
+
+# extract repro_runs
+rp = d.repro_runs("baseline")
 
 # extract baseline
-bl = d["BaselineActivity_2"]
+bl = d["BaselineActivity_3"]
 
 # extract voltage and time
 spike_times = bl.spikes()
