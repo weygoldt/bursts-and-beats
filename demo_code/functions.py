@@ -2,6 +2,8 @@ import numpy as np
 from scipy import interpolate
 from scipy.signal import butter, sosfiltfilt
 
+from termcolors import TermColor as tc
+
 # Data simulation
 
 
@@ -255,6 +257,97 @@ def isi_serialcorr(isis, max_lag=10):
             # ensure "enough" data
             isicorr[k] = np.corrcoef(isis[: nisis - lag], isis[lag:])[0, 1]
     return isicorr, lags
+
+
+def burst_detector(spike_times, isi_thresh, verbose=True):
+
+    # compute interspike intervals
+    isi = isis([spike_times])[0]
+
+    # find indices of spike times in time array
+    spike_indices = np.arange(len(spike_times))
+
+    # find spikes where at least one sourrounding isi is lower than the threshold
+    burst_spikes = []
+    single_spikes = []
+    burst = False
+    switch = False
+
+    for spike in spike_indices:
+
+        # first spike
+        if spike == spike_indices[0]:
+            spike_isi = isi[0]
+
+            # test if greater than thresh
+            if spike_isi < isi_thresh and burst is False:
+                burst = True
+                burst_list = []
+                burst_list.append(spike)
+            else:
+                burst = False
+
+        # last spike
+        elif spike == spike_indices[-1]:
+            spike_isi = isi[-1]
+
+            # test if greater than thresh
+            if spike_isi < isi_thresh and burst is True:
+                burst_list.append(spike)
+            else:
+                burst = False
+
+        # middle spikes
+        else:
+            spike_isi = isi[spike - 1 : spike + 1]
+
+            # test if greater than thresh
+            if (
+                (spike_isi[0] < isi_thresh) or (spike_isi[1] < isi_thresh)
+            ) and burst is True:
+
+                # the burst stops if the next ISI is greater
+                if spike_isi[1] > isi_thresh:
+                    switch = True
+
+                burst_list.append(spike)
+
+            elif (
+                (spike_isi[0] < isi_thresh) or (spike_isi[1] < isi_thresh)
+            ) and burst is False:
+                burst = True
+                burst_list = []
+                burst_list.append(spike)
+            else:
+                burst = False
+
+        if switch:
+            burst_spikes.append(burst_list)
+            burst_list = []
+
+        if burst is False:
+            single_spikes.append(spike)
+
+        switch = False
+
+    # convert to numpy arrays
+    burst_spikes = np.array(burst_spikes, dtype=object)
+    single_spikes = np.array(single_spikes)
+
+    # compute start and stop of each burst
+    burst_start_stop = []
+    for burst in burst_spikes:
+        burst_start_stop.append([burst[0], burst[-1]])
+    burst_start_stop = np.array(burst_start_stop)
+
+    if verbose is True:
+        print(f"{tc.succ('Burst threshold: ')}{isi_thresh} seconds interspike interval")
+        print(
+            f"{tc.succ('Burst spikes: ')}{len(flatten(burst_spikes))} spikes in {len(burst_spikes)} bursts"
+        )
+        print(f"{tc.succ('Single spikes: ')}{len(single_spikes)} spikes")
+
+    return single_spikes, burst_spikes, burst_start_stop
 
 
 # Filters
