@@ -26,12 +26,12 @@ burst_spikes_flat = fs.flatten(burst_spikes)
 plt.plot(t, v)
 plt.scatter(
     spike_times[single_spikes],
-    np.ones_like(spike_times[single_spikes]) - 21,
+    np.ones_like(spike_times[single_spikes]) - 0,
     marker="|",
 )
 plt.scatter(
     spike_times[burst_spikes_flat],
-    np.ones_like(spike_times[burst_spikes_flat]) - 20,
+    np.ones_like(spike_times[burst_spikes_flat]) - 1,
     marker="|",
 )
 for bounds in burst_start_stop:

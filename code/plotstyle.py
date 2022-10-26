@@ -6,8 +6,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
-import plottools.colors as c
-import seaborn as sns
 from cmocean import cm
 from matplotlib.colors import ListedColormap
 
@@ -16,8 +14,6 @@ def PlotStyle(darkmode=False):
     class s:
 
         lightcmap = cmocean.tools.lighten(cmocean.cm.haline, 0.8)
-        specmap = sns.color_palette("Spectral_r", as_cmap=True)
-        colors = c.colors_muted
 
         cm = 1 / 2.54
         mm = 1 / 25.4
@@ -225,7 +221,7 @@ def PlotStyle(darkmode=False):
 
     plt.rcParams["image.cmap"] = s.lightcmap
     plt.rcParams["axes.xmargin"] = 0
-    plt.rcParams["figure.constrained_layout.use"] = True
+    # plt.rcParams["figure.constrained_layout.use"] = True
     plt.rcParams["axes.ymargin"] = 0
     plt.rcParams["axes.titlelocation"] = "left"
     plt.rcParams["axes.titlesize"] = BIGGER_SIZE
