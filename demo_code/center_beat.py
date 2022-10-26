@@ -25,5 +25,3 @@ plt.plot(stim_time[t_times], stim[t_times], alpha=0.6)
 for i in range(multiple_ts):
     plt.scatter(t*i, np.zeros(1)*0.09)
 plt.show()
-
-
