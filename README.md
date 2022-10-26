@@ -6,7 +6,6 @@ First block of the neurobiological lab rotation in 2022/23
 ### Data wrangling
 - Sort repros: Which can be averaged with which? Avoid pseudoreplication!
   - Which beats where recorded (read EOD multiples in chirp repro metadata)?
-  - Which recording had which beat?
   - Do we have multiple recordings for the same beat?
 
 ### Analysis functions
