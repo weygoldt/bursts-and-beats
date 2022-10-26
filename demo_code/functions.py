@@ -2,8 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import interpolate
 from scipy.signal import butter, sosfiltfilt
-from sklearn.metrics import auc
-from sklearn.neighbors import KernelDensity
+from scipy.stats import gamma
 
 from termcolors import TermColor as tc
 
