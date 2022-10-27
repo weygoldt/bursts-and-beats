@@ -23,15 +23,16 @@ dt = stim_time[1]-stim_time[0]
 t_time = np.arange(0, t*multiple_ts, dt)
 t_times = range(len(t_time))
 
-
+n = 3 
 zeros = np.where(np.diff(np.sign(stim)))[0]
 maxima_index = []
-for i in range(len(zeros)):
+for i, x in enumerate(range(len(zeros))):
     #maxima = np.argmax(np.arange(stim[zeros[i]], stim[zeros[i+2]], dt))
-    max_range = np.arange(stim_time[zeros[i]], stim_time[zeros[i+2]],dt)
-    max_index = range(len(max_range))
-    maximum = np.argmax(stim[max_index])
-    maxima_index.append(maximum)
+     if i % n == 0:
+        max_range = np.arange(stim_time[zeros[x]], stim_time[zeros[x+2]],dt)
+        max_index = range(len(max_range))
+        maximum = np.argmax(stim[max_index])
+        maxima_index.append(maximum)
 
 embed()
 exit()
