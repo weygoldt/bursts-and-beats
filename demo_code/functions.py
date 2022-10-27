@@ -521,7 +521,7 @@ def singlecell_cts(data):
     for repro in chirp_repros:
 
         # get chirps from each repro
-        chirps = d[repro]
+        chirps = data[repro]
 
         for i in range(chirps.stimulus_count):
 
@@ -538,7 +538,7 @@ def singlecell_cts(data):
             for c in chirp_times:
 
                 # where is chirp on time vector?
-                c_index = fs.find_closest(time, c)
+                c_index = find_closest(time, c)
 
                 # make index vector centered around chirp
                 indices = np.arange(
@@ -561,7 +561,7 @@ def singlecell_cts(data):
                 c_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
 
                 # get spike indices on c_time vector
-                c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
+                c_spike_indices = [find_closest(c_time, x) for x in c_spikes]
 
                 # make new centered time array
                 c_time = np.arange(-before_indices * dt, (after_indices + 1) * dt, dt)
@@ -609,7 +609,7 @@ def hompopulation_cts(data):
     for repro in chirp_repros:
 
         # get chirps from each repro
-        chirps = d[repro]
+        chirps = data[repro]
 
         for i in range(chirps.stimulus_count):
 
@@ -629,7 +629,7 @@ def hompopulation_cts(data):
             for c in chirp_times:
 
                 # where is chirp on time vector?
-                c_index = fs.find_closest(time, c)
+                c_index = find_closest(time, c)
 
                 # make index vector centered around chirp
                 indices = np.arange(
@@ -652,7 +652,7 @@ def hompopulation_cts(data):
                 c_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
 
                 # get spike indices on c_time vector
-                c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
+                c_spike_indices = [find_closest(c_time, x) for x in c_spikes]
 
                 # make new centered time array
                 c_time = np.arange(-before_indices * dt, (after_indices + 1) * dt, dt)
@@ -664,7 +664,7 @@ def hompopulation_cts(data):
                 spikelist.append(c_spikes_centered)
 
             # flatten spike list to simulate activity of hom population
-            spikelist_flat = fs.flatten(spikelist)
+            spikelist_flat = flatten(spikelist)
 
             # save to spike times list
             spike_t.append(spikelist_flat)
