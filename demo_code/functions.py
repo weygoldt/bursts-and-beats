@@ -486,21 +486,206 @@ def causal_kde1d(spikes, time, width, shape=2):
     return rate
 
 
-# sorting chirp Data 
+# Data access and sorting
+
+
+def singlecell_cts(data):
+    """
+    singlecell_cts extracts the spikes centered around the chirp stimulus
+    (chirp-triggered spikes) onset for every single chirp stimulus.
+
+    Parameters
+    ----------
+    data : rlxnix dataset
+        Relacs dataset imported with rlxnix
+
+    Returns
+    -------
+    spike_t : array of arrays
+        an array including an array for every ct-spiketrain
+    c_time : array
+        the time centered around the chirp
+    """
+
+    # collect chirp-centered spike times here
+    spike_t = []
+
+    # padding around chirp
+    before_t = 0.1
+    after_t = 0.2
+
+    # find all chirp repros
+    chirp_repros = [i for i in data.repros if "Chirps" in i]
+
+    # go through all chirp repros
+    for repro in chirp_repros:
+
+        # get chirps from each repro
+        chirps = d[repro]
+
+        for i in range(chirps.stimulus_count):
+
+            # get data
+            _, time = chirps.membrane_voltage(i)
+            spikes = chirps.spikes(i)
+            chirp_times = chirps.chirp_times[0][i]
+
+            # compute number of indices before and after chirp to include
+            dt = time[1] - time[0]
+            before_indices = np.round(before_t / dt)
+            after_indices = np.round(after_t / dt)
+
+            for c in chirp_times:
+
+                # where is chirp on time vector?
+                c_index = fs.find_closest(time, c)
+
+                # make index vector centered around chirp
+                indices = np.arange(
+                    c_index - before_indices, c_index + after_indices, dtype=int
+                )
+
+                # get max t and min t
+                try:
+                    c_time = time[indices]
+                except:
+                    print(tc.warn(f"Trial {i} Repro {repro} skipped, not enough data!"))
+                    print(f"max index: {np.max(indices)}")
+                    print(f"time length: {len(time)}")
+                    continue
+
+                tmin = np.min(c_time)
+                tmax = np.max(c_time)
+
+                # get spike times in this range
+                c_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
+
+                # get spike indices on c_time vector
+                c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
+
+                # make new centered time array
+                c_time = np.arange(-before_indices * dt, (after_indices + 1) * dt, dt)
+
+                # extract spike timestamps from centered time
+                c_spikes_centered = c_time[c_spike_indices]
+
+                # append centered spike times to list
+                spike_t.append(c_spikes_centered)
+
+    return spike_t, c_time
+
+
+def hompopulation_cts(data):
+    """
+    hompopulation_cts extracts the spikes centered around the chirp stimulus
+    (chirp-triggered spikes) onset for every single chirp stimulus and groups
+    them per trial. This simulates a population response for a homogenous
+    population of this cell.
+
+    Parameters
+    ----------
+    data : rlxnix dataset
+        Relacs dataset imported with rlxnix
+
+    Returns
+    -------
+    spike_t : array of arrays
+        an array including an array for every ct-spiketrain
+    c_time : array
+        the time centered around the chirp
+    """
+
+    # collect chirp-centered spike times here
+    spike_t = []
+
+    # padding around chirp
+    before_t = 0.1
+    after_t = 0.2
+
+    # find all chirp repros
+    chirp_repros = [i for i in data.repros if "Chirps" in i]
+
+    # go through all chirp repros
+    for repro in chirp_repros:
+
+        # get chirps from each repro
+        chirps = d[repro]
+
+        for i in range(chirps.stimulus_count):
+
+            # get data
+            _, time = chirps.membrane_voltage(i)
+            spikes = chirps.spikes(i)
+            chirp_times = chirps.chirp_times[0][i]
+
+            # compute number of indices before and after chirp to include
+            dt = time[1] - time[0]
+            before_indices = np.round(before_t / dt)
+            after_indices = np.round(after_t / dt)
+
+            # collect spikes for this trial here
+            spikelist = []
+
+            for c in chirp_times:
+
+                # where is chirp on time vector?
+                c_index = fs.find_closest(time, c)
+
+                # make index vector centered around chirp
+                indices = np.arange(
+                    c_index - before_indices, c_index + after_indices, dtype=int
+                )
+
+                # get max t and min t
+                try:
+                    c_time = time[indices]
+                except:
+                    print(tc.warn(f"Trial {i} Repro {repro} skipped, not enough data!"))
+                    print(f"max index: {np.max(indices)}")
+                    print(f"time length: {len(time)}")
+                    continue
+
+                tmin = np.min(c_time)
+                tmax = np.max(c_time)
+
+                # get spike times in this range
+                c_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
+
+                # get spike indices on c_time vector
+                c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
+
+                # make new centered time array
+                c_time = np.arange(-before_indices * dt, (after_indices + 1) * dt, dt)
+
+                # extract spike timestamps from centered time
+                c_spikes_centered = c_time[c_spike_indices]
+
+                # append centered spike times to list
+                spikelist.append(c_spikes_centered)
+
+            # flatten spike list to simulate activity of hom population
+            spikelist_flat = fs.flatten(spikelist)
+
+            # save to spike times list
+            spike_t.append(spikelist_flat)
+
+    return spike_t, c_time
+
+
 def sort_reodfs(data):
     """Sorting of the relative EODs of chirps data.
 
     Parameters
     ----------
-    data : rlx.Dataset nix file 
+    data : rlx.Dataset nix file
         Dataset with different EODs for chirp data
     Returns
     -------
     dic
-        Dictionary with the relative EODs as keys, Items are the name of the trace  
+        Dictionary with the relative EODs as keys, Items are the name of the trace
     """
     r_eodf = []
-    for chirp in data.repro_runs('Chirps'):
+    for chirp in data.repro_runs("Chirps"):
         r_eodf.append(chirp.relative_eodf)
 
     r_eodf_arr = np.array(r_eodf)
@@ -511,8 +696,8 @@ def sort_reodfs(data):
     for unique_r_eodf in r_eodf_arr_uniq:
         r_eodf_dict[f"{unique_r_eodf}"] = []
         for r in range(len(r_eodf)):
-            chirps = data.repro_runs('Chirps')[r]
+            chirps = data.repro_runs("Chirps")[r]
             if unique_r_eodf == r_eodf[r]:
                 r_eodf_dict[f"{unique_r_eodf}"].append(chirps.name)
-    
+
     return r_eodf_dict
