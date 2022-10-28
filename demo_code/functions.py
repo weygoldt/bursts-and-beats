@@ -744,4 +744,36 @@ def eods_to_rel(fish_eod, stim_eod):
 
 
 def coustomnorm(data):
+    """
+    coustomnorm normalizes an array between -1 and 1.
+
+    Parameters
+    ----------
+    data : array
+        The input data
+
+    Returns
+    -------
+    array
+        The normalized array
+    """
     return 2 * ((data - min(data)) / (max(data) - min(data))) - 1
+
+
+def euclidean(u, v):
+    """
+    euclidean computes the Euclidean distance between two arrays.
+
+    Parameters
+    ----------
+    u : array
+        The first array
+    v : array
+        The second array
+
+    Returns
+    -------
+    float
+        The Euclidean distance between the arrays.
+    """
+    return np.sqrt(np.sum(np.abs(u - v) ** 2))

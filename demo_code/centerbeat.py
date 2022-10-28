@@ -12,6 +12,10 @@ d = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
 
 # find all chirp repros
 chirp_repros = [i for i in d.repros if "Chirps" in i]
+# chirp_repros = chirp_repros[]
+
+# collect beat-centered spike times here
+spike_t = []
 
 # go through all chirp repros
 for repro in chirp_repros:
@@ -48,10 +52,13 @@ for repro in chirp_repros:
         rate = 1 / (envelope_time[1] - envelope_time[0])
 
         # bandpass filter envelope
-        env_filt = fs.bandpass_filter(envelope, rate, 1, 50)
+        env_filt = fs.bandpass_filter(envelope, rate, 10, 50)
 
         # rectify envelope
         env_filt[env_filt < 0] = 0
+
+        plt.plot(envelope_time, env_filt)
+        plt.show()
 
         # find where rectified lower EOD is now 0
         idx = np.arange(len(env_filt))
@@ -113,13 +120,10 @@ for repro in chirp_repros:
         before_indices = np.round(before_t / dt)
         after_indices = np.round(after_t / dt)
 
-        # collect beat-centered spike times here
-        spike_t = []
-
-        for b in beat[selected_beats]:
+        for sb in time[selected_beats]:
 
             # where is index on the time vector?
-            b_index = fs.find_closest(time, b)
+            b_index = fs.find_closest(time, sb)
 
             # make index vector centered around beat
             indices = np.arange(
@@ -141,7 +145,7 @@ for repro in chirp_repros:
             # get spike times in this range
             b_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
 
-            # get spike indices on c_time vector
+            # get spike indices on b_time vector
             b_spike_indices = [fs.find_closest(b_time, x) for x in b_spikes]
 
             # make new centered time array
