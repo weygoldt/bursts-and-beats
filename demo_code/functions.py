@@ -119,18 +119,20 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     zero_idx = idx[lower_eod_rect != 0]
 
     # find gaps of continuity in index array
-    lowers = (zero_idx + 1)[:-1]
-    uppers = (zero_idx - 1)[1:]
-    mask = lowers <= uppers
-    upperbounds, lowerbounds = uppers[mask], lowers[mask]
+    diffs = np.diff(zero_idx)
+    diffs = np.append(diffs, 0)
+    zerocrossings = zero_idx[diffs > 1]
+
+    # calculate boundaries
+    bounds = [[x, y] for x, y in zip(zerocrossings, zerocrossings[1:])]
 
     # calculate maxima in non-zero areas
     peaks = []
-    for upper, lower in zip(upperbounds[0:-2], lowerbounds[1:-1]):
+    for b in bounds:
 
         # make ranges from boundaries
-        bounds = np.arange(upper, lower)
-        peak = bounds[beat[bounds] == np.max(beat[bounds])][0]
+        b_full = np.arange(b[0], b[1])
+        peak = b_full[lower_eod_rect[b_full] == np.max(lower_eod_rect[b_full])][0]
         peaks.append(peak)
 
     # interpolate between peaks
@@ -377,6 +379,31 @@ def bandpass_filter(data, rate, flow, fhigh, order=1):
     return y
 
 
+def lowpass_filter(data, rate, cutoff, order=2):
+    """
+    lowpass filter
+
+    Parameters
+    ----------
+    data : 1d array
+        data to filter
+    rate : float
+        sampling rate of the data in Hz
+    cutoff : float
+        cutoff frequency of the filter in Hz
+    order : int, optional
+        order of the filter, by default 2
+
+    Returns
+    -------
+    1d array
+        filtered data
+    """
+    sos = butter(order, cutoff, btype="low", fs=rate, output="sos")
+    y = sosfiltfilt(sos, data)
+    return y
+
+
 # Other
 
 
@@ -521,7 +548,7 @@ def singlecell_cts(data):
     for repro in chirp_repros:
 
         # get chirps from each repro
-        chirps = d[repro]
+        chirps = data[repro]
 
         for i in range(chirps.stimulus_count):
 
@@ -538,7 +565,7 @@ def singlecell_cts(data):
             for c in chirp_times:
 
                 # where is chirp on time vector?
-                c_index = fs.find_closest(time, c)
+                c_index = find_closest(time, c)
 
                 # make index vector centered around chirp
                 indices = np.arange(
@@ -561,7 +588,7 @@ def singlecell_cts(data):
                 c_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
 
                 # get spike indices on c_time vector
-                c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
+                c_spike_indices = [find_closest(c_time, x) for x in c_spikes]
 
                 # make new centered time array
                 c_time = np.arange(-before_indices * dt, (after_indices + 1) * dt, dt)
@@ -609,7 +636,7 @@ def hompopulation_cts(data):
     for repro in chirp_repros:
 
         # get chirps from each repro
-        chirps = d[repro]
+        chirps = data[repro]
 
         for i in range(chirps.stimulus_count):
 
@@ -629,7 +656,7 @@ def hompopulation_cts(data):
             for c in chirp_times:
 
                 # where is chirp on time vector?
-                c_index = fs.find_closest(time, c)
+                c_index = find_closest(time, c)
 
                 # make index vector centered around chirp
                 indices = np.arange(
@@ -652,7 +679,7 @@ def hompopulation_cts(data):
                 c_spikes = spikes[(spikes > tmin) & (spikes < tmax)]
 
                 # get spike indices on c_time vector
-                c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
+                c_spike_indices = [find_closest(c_time, x) for x in c_spikes]
 
                 # make new centered time array
                 c_time = np.arange(-before_indices * dt, (after_indices + 1) * dt, dt)
@@ -664,7 +691,7 @@ def hompopulation_cts(data):
                 spikelist.append(c_spikes_centered)
 
             # flatten spike list to simulate activity of hom population
-            spikelist_flat = fs.flatten(spikelist)
+            spikelist_flat = flatten(spikelist)
 
             # save to spike times list
             spike_t.append(spikelist_flat)
@@ -701,3 +728,20 @@ def sort_reodfs(data):
                 r_eodf_dict[f"{unique_r_eodf}"].append(chirps.name)
 
     return r_eodf_dict
+
+
+# small tools
+
+
+def rel_to_eods(fish_eod, rel):
+    """Converts the relative EOD to the fish to the stim EOD"""
+    return (rel - 1) * fish_eod + fish_eod
+
+
+def eods_to_rel(fish_eod, stim_eod):
+    """Converts the stimulus EOD to the relative EOD to the fish"""
+    return ((stim_eod - fish_eod) / fish_eod) + 1
+
+
+def coustomnorm(data):
+    return 2 * ((data - min(data)) / (max(data) - min(data))) - 1
