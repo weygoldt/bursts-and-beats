@@ -4,6 +4,7 @@ import rlxnix as rlx
 from IPython import embed
 from scipy.signal import find_peaks
 from scipy.interpolate import interp1d
+from functions import sort_reodfs
 
 dset = rlx.Dataset("../data/2021-11-11-af-invivo-1.nix")
 
@@ -34,9 +35,10 @@ for i, x in enumerate(range(len(zeros))):
         maximum = np.argmax(stim[max_index])
         maxima_index.append(maximum)
 
+
+
 embed()
 exit()
-
 
 plt.plot(stim_time[t_times], stim[t_times], alpha=0.6)
 for i in range(multiple_ts):
