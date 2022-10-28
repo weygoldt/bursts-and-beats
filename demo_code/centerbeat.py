@@ -3,12 +3,19 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
+from IPython import embed
 
 import functions as fs
 from termcolors import TermColor as tc
 
+################################################################################
+# TO DO
+# Find out why i = 5 is skipped for all repros (something with the envelope
+# computation does not work)
+################################################################################
+
 # get data
-d = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
+d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 
 # find all chirp repros
 chirp_repros = [i for i in d.repros if "Chirps" in i]
@@ -16,6 +23,7 @@ chirp_repros = [i for i in d.repros if "Chirps" in i]
 
 # collect beat-centered spike times here
 spike_t = []
+times = []
 
 # go through all chirp repros
 for repro in chirp_repros:
@@ -29,6 +37,13 @@ for repro in chirp_repros:
 
         # get data
         _, time = chirps.membrane_voltage(i)
+
+        if np.max(time) < 1:
+            print(tc.err("Trial too short, skipping"))
+            continue
+
+        dt = time[1] - time[0]
+        rate = 1 / dt
         spikes = chirps.spikes(i)
         chirp_times = chirps.chirp_times[0][i]
         nchirps = len(chirp_times)
@@ -41,45 +56,10 @@ for repro in chirp_repros:
         stim_eod, stim_eodtime = chirps.stimulus_output(i)
         stim_eodf = fs.rel_to_eods(fish_eodf, chirps.relative_eodf)
 
-        # Find beat peaks --------------------------------------------------------------
-
         # make envelope
         beat, envelope, envelope_time = fs.beat_envelope(
             stim_eod, fish_eod, stim_eodf, fish_eodf, time
         )
-
-        # get envelope sampling rate (should be the same as data)
-        rate = 1 / (envelope_time[1] - envelope_time[0])
-
-        # bandpass filter envelope
-        env_filt = fs.bandpass_filter(envelope, rate, 10, 50)
-
-        # rectify envelope
-        env_filt[env_filt < 0] = 0
-
-        plt.plot(envelope_time, env_filt)
-        plt.show()
-
-        # find where rectified lower EOD is now 0
-        idx = np.arange(len(env_filt))
-        zero_idx = idx[env_filt != 0]
-
-        # find gaps of continuity in index array
-        diffs = np.diff(zero_idx)
-        diffs = np.append(diffs, 0)
-        zerocrossings = zero_idx[diffs > 1]
-
-        # calculate boundaries
-        bounds = [[x, y] for x, y in zip(zerocrossings, zerocrossings[1:])]
-
-        # calculate maxima in non-zero areas
-        peaks = []
-        for b in bounds:
-
-            # make ranges from boundaries
-            b_full = np.arange(b[0], b[1])
-            peak = b_full[env_filt[b_full] == np.max(env_filt[b_full])][0]
-            peaks.append(peak)
 
         # Find chirp areas -------------------------------------------------------------
 
@@ -91,31 +71,55 @@ for repro in chirp_repros:
             [c - chirp_duration / 2, c + chirp_duration / 2] for c in chirp_times
         ]
 
-        # find indices of chirp windows
-        chirp_window_indices = fs.flatten(
-            [
-                np.arange(fs.find_closest(time, x[0]), fs.find_closest(time, x[1]))
-                for x in chirp_windows
-            ]
-        )
+        # find indices of chirp window start and stop
+        chirp_window_indices = [
+            [fs.find_closest(time, x[0]), fs.find_closest(time, x[1])]
+            for x in chirp_windows
+        ]
 
-        # compute the time windows where chirps are NOT
-        indices = np.arange(len(time))
-        indices = np.delete(indices, chirp_window_indices)
+        # convert indices to NON-chirp window start stop
+        nonchirp_indices = []
+        for i, w in enumerate(chirp_window_indices):
 
-        # Draw random beat peaks in non-chirp areas ------------------------------------
+            # start first window with 0
+            if w[0] == chirp_window_indices[0][0]:
+                nonchirp_indices.append([0, w[0]])
 
-        # select all beat peaks that are not in chirp range
-        verified_peaks = [p for p in peaks if p in indices]
+            # end last window with len(time)
+            elif w[1] == chirp_window_indices[-1][1]:
+                nonchirp_indices.append([chirp_window_indices[i - 1][1], w[0]])
+                nonchirp_indices.append([w[1], len(time)])
+
+            # take last of previous and first of current for middle windows
+            else:
+                nonchirp_indices.append([chirp_window_indices[i - 1][1], w[0]])
+
+        # split envelope in non chirp periods
+        env_split = [envelope[x[0] : x[1]] for x in nonchirp_indices]
+        env_time = [envelope_time[x[0] : x[1]] for x in nonchirp_indices]
+
+        # compute peak timestamps by sine approximation for each envelope snippet
+        try:
+            env_peaks = fs.flatten(
+                [
+                    t[fs.envelope_peaks(env, t, rate)]
+                    for env, t in zip(env_split, env_time)
+                ]
+            )
+        except:
+            embed()
+
+        # convert peak timestamps to indices on whole time array
+        beat_peaks = [fs.find_closest(time, x) for x in env_peaks]
 
         # draw random beat peaks
-        selected_beats = random.sample(verified_peaks, nchirps)
+        selected_beats = random.sample(beat_peaks, nchirps)
 
         # Center the time at the beat peak ---------------------------------------------
 
         # compute number of indices before and after chirp to include
-        before_t = 0.1
-        after_t = 0.2
+        before_t = 0.05
+        after_t = 0.1
         dt = time[1] - time[0]
         before_indices = np.round(before_t / dt)
         after_indices = np.round(after_t / dt)

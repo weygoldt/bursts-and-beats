@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from IPython import embed
 from scipy import interpolate
-from scipy.signal import butter, sosfiltfilt
+from scipy.signal import butter, periodogram, sosfiltfilt
 from scipy.stats import gamma
 
 from termcolors import TermColor as tc
@@ -777,3 +778,65 @@ def euclidean(u, v):
         The Euclidean distance between the arrays.
     """
     return np.sqrt(np.sum(np.abs(u - v) ** 2))
+
+
+def envelope_peaks(envelope, time, rate):
+    """
+    envelope_peaks computes the peaks of a beat envelope by approximating the envelope with a sine of the same frequency and phase of the smalles Euclidean distance to the envelope.
+
+    Parameters
+    ----------
+    envelope : array-like
+        The beat envelope.
+    time : array-like
+        The time array corresponding to the envelope.
+    rate :  float
+        Sampling rate of data and envelope
+
+    Returns
+    -------
+    peaks : array
+        Indices for the peaks on the envelope.
+    """
+
+    # calculate envelope power spectrum
+    f, p = periodogram(envelope, rate)
+
+    # get frequency of maximum power (i.e. envelope frequency)
+    f_env = f[p == np.max(p)][0]
+
+    # make many sines in envelope frequencies and different phases
+    phases = np.arange(0, 2.0 * np.pi, 0.1)  # phases
+    sines = np.array([np.sin(2.0 * np.pi * f_env * time + p) for p in phases])
+
+    # compute euclidean distance from envelope to all sines
+    dist = [euclidean(envelope, x) for x in sines]
+
+    # get sine at phase where euclidean distance is lowest
+    env_approx = sines[phases == phases[dist == np.min(dist)][0]][0]
+
+    # rectify sine approximated envelope
+    env_approx[env_approx < 0] = 0
+
+    # find where rectified sine is now 0
+    idx = np.arange(len(env_approx))
+    zero_idx = idx[env_approx != 0]
+
+    # find gaps of continuity in index array
+    diffs = np.diff(zero_idx)
+    diffs = np.append(diffs, 0)
+    zerocrossings = zero_idx[diffs > 1]
+
+    # calculate boundaries
+    bounds = [[x, y] for x, y in zip(zerocrossings, zerocrossings[1:])]
+
+    # calculate maxima in non-zero areas
+    peaks = []
+    for b in bounds:
+
+        # make ranges from boundaries
+        b_full = np.arange(b[0], b[1])
+        peak = b_full[env_approx[b_full] == np.max(env_approx[b_full])][0]
+        peaks.append(peak)
+
+    return peaks
