@@ -6,7 +6,7 @@ import functions as fs
 from termcolors import TermColor as tc
 
 # load data
-d = rlx.Dataset("../data/2022-10-20-ab-invivo-1.nix")
+d = rlx.Dataset("data/2022-10-20-ab-invivo-1.nix")
 
 # extract baseline
 bl = d["BaselineActivity_2"]

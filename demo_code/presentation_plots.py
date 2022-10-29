@@ -3,6 +3,7 @@ import numpy as np
 from IPython import embed
 from scipy import interpolate
 
+
 def create_chirp(
     eodf=500,
     chirpsize=100,
@@ -151,7 +152,6 @@ sinus1 = ampl * np.sin(2 * np.pi * freq1 * time)
 am = sinus + sinus1 
 
 # interpolated am modlation, envelope
-
 beat, envelope, envelope_time = beat_envelope(sinus, sinus1, freq, freq1, time)
 
 
@@ -163,3 +163,6 @@ ax3.plot(envelope_time, envelope)
 plt.show()
 
 
+    """
+     _summary_
+    """
