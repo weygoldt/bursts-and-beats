@@ -16,7 +16,7 @@ def filter_stimulus(stim):
 
 
 # get data
-d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
+d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
 # fi = d.find_stimuli("FIC", filter_stimulus)
 
 #find contrast 
@@ -64,6 +64,30 @@ for k in sorted_contrasts:
         sorted_trials[c].append(int(k))
     else:        
         sorted_trials[c] = [int(k)]       
+
+rates = {}
+for key in sorted_trials:
+    ind = sorted_trials.get(key)
+    rate_per_contrast = []
+    rates[key] = []
+    for i in ind:
+        spikes, _ = fi[i].trace_data('Spikes-1')
+        rate = len(spikes) / 0.4
+        rate_per_contrast.append(rate)
+    
+    rates[key].append(np.mean(rate_per_contrast))
+
+rates_with_con = rates.items()
+x, y = zip(*rates_with_con)
+for i in rates:
+    plt.scatter(i, rates[i][0])
+plt.show()
+
+
+
+
+        
+
 
 embed()
 exit()
