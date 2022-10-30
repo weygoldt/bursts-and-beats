@@ -6,7 +6,7 @@ import functions as fs
 from termcolors import TermColor as tc
 
 # get data
-d = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
+d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 
 # extract centered spiketimes
 singlecell_spikes, time = fs.singlecell_cts(d)
@@ -45,4 +45,5 @@ ax.eventplot(
 ax.axvline(0, 0, 100, color="black", linestyle="dashed", lw=1)
 ax.plot(kdetime, hompopulation_mean, color="green", lw=2)
 ax.plot(kdetime, singlecell_mean, color="red", lw=2)
+# ax.set_xlim(-0.08, 0.18)
 plt.show()
