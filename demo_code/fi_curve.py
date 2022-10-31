@@ -1,19 +1,16 @@
-import random
 
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
 from IPython import embed
+import plot_parameter
 
-import functions as fs
-from termcolors import TermColor as tc
 """
 def filter_stimulus(stim):
     contrast = stim.feature_data("rectangle-1_Contrast")
     return contrast > 9.5 and contrast < 12.9
 
 """
-
 
 # get data
 d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
@@ -66,31 +63,31 @@ for k in sorted_contrasts:
         sorted_trials[c] = [int(k)]       
 
 rates = {}
+mean_rates = {}
 for key in sorted_trials:
     ind = sorted_trials.get(key)
-    rate_per_contrast = []
     rates[key] = []
+    mean_rates[key] = []
+    rate_per_contrast = []
     for i in ind:
         spikes, _ = fi[i].trace_data('Spikes-1')
         rate = len(spikes) / 0.4
         rate_per_contrast.append(rate)
     
-    rates[key].append(np.mean(rate_per_contrast))
+    rates[key].append(rate_per_contrast)
+    mean_rates[key].append(np.mean(rate_per_contrast))
 
-rates_with_con = rates.items()
-x, y = zip(*rates_with_con)
+rate_stds = []
 for i in rates:
-    plt.scatter(i, rates[i][0])
+    contrast = i
+    std = np.std(rates[i][0])
+    rate_stds.append(std)
+
+r = [mean_rates[key][0] for key in mean_rates]
+c = [key for key in mean_rates]
+
+fig, ax = plt.subplots(figsize=(8, 6))
+ax.errorbar(c, r, yerr=rate_stds, fmt="-o")
+ax.set_ylabel('Firing rate [Hz]')
+ax.set_xlabel('Contrasts')
 plt.show()
-
-
-
-
-        
-
-
-embed()
-exit()
-
-
-# firering rate and std for each space !!
