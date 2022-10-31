@@ -1,8 +1,35 @@
 import numpy as np 
 import rlxnix as rlx 
+import matplotlib.pyplot as plt
 from IPython import embed
 
-dset = rlx.Dataset("data/2022-10-20-ab-invivo-1.nix")
+
+dset = rlx.Dataset("data/2021-11-11-af-invivo-1.nix")
+chirp = dset['Chirps_8']
+eod = dset.metadata['Recording']['Subject']['EOD Frequency'][0][0]
+reod = chirp.relative_eodf
+beat_freq = eod * reod
+period = 1 / beat_freq
+
+chirp_count = chirp.stimulus_count
+stim, stim_time = chirp.stimulus_output(0)
+
+mins = []
+for i in range(len(stim)):
+    min = np.amin(stim[i])
+    mins.append(min)  
+
+# xmins = []
+# for x in range(len(stim)):
+#     xmin = np.where(stim[x] == mins[x])
+#     xmins.append(xmin)
+
+
+plt.plot(stim_time, stim)
+plt.scatter(range(len(stim_time)), mins, color='red')
+plt.show()
+embed()
+exit()
 
 def sort_reodfs(data):
     """Sorting of the relative EODs of chirps data.
