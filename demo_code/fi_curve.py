@@ -65,8 +65,22 @@ for k in sorted_contrasts:
     else:        
         sorted_trials[c] = [int(k)]       
 
-embed()
-exit()
+rates = {}
+for key in sorted_trials:
+    ind = sorted_trials.get(key)
+    rate_per_contrast = []
+    rates[key] = []
+    for i in ind:
+        spikes, _ = fi[i].trace_data('Spikes-1')
+        rate = len(spikes) / 0.4
+        rate_per_contrast.append(rate)
+    
+    rates[key].append(np.mean(rate_per_contrast))
 
+rates_with_con = rates.items()
+x, y = zip(*rates_with_con)
+for i in rates:
+    plt.scatter(i, rates[i][0])
+plt.show()
 
 # firering rate and std for each space !!
