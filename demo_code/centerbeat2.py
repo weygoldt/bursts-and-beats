@@ -1,6 +1,3 @@
-import enum
-from tracemalloc import start
-
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
@@ -8,7 +5,6 @@ from scipy import interpolate
 
 import functions as fs
 from plotstyle import PlotStyle
-from termcolors import TermColor as tc
 
 ps = PlotStyle()
 
@@ -22,8 +18,10 @@ spikes = samd.trace_data("Spikes-1")[0]
 beat, time = samd.trace_data("LocalEOD-1")
 dt = time[1] - time[0]
 eod, time = samd.trace_data("EOD")
-pause = 5
-stim_dur = 30
+
+pause = 5  # pause legth in seconds (see metadata)
+stim_dur = 30  # stim length in seconds (see metadata)
+num_period = 3  # how many periods to plot
 
 # start at 5 seconds and cut next 30 seconds into period bins
 startindex = fs.find_closest(time, pause)
@@ -74,7 +72,7 @@ p_indices = np.arange(len(env_time))[(env > 0) & (env_roll <= 0)]
 
 # collect times
 envs_ts = []
-for i, ii in zip(p_indices, p_indices[1:]):
+for i, ii in zip(p_indices, p_indices[num_period:]):
 
     tmin, tmax = env_time[i], env_time[ii]  # make bounds to select spikes in
     t = env_time[i:ii] - tmin  # collect envelope time
@@ -90,7 +88,7 @@ envs_ts = np.arange(abs_tmin, abs_tmax, dt)
 # collect envelopes and spikes
 envs = []
 spks = []
-for i, ii in zip(p_indices, p_indices[1:]):
+for i, ii in zip(p_indices, p_indices[num_period:]):
 
     # get data
     e = env[i:ii]  # collect envelope
@@ -124,29 +122,48 @@ meankde = np.mean(kdes, axis=0)
 
 jit_x1 = np.ones_like(fs.flatten(spks)) * -4
 
-# plot
-fig, ax = plt.subplots(2, 1, figsize=(16 * ps.cm, 12 * ps.cm), sharex=True)
+# initialize plot
+fig, ax = plt.subplots(2, 1, figsize=(24 * ps.cm, 12 * ps.cm), sharex=True)
+
+# plot envelopes
 for e in envs:
     ax[0].plot(envs_ts * 1000, e, c="darkgrey", alpha=0.1)
-ax[0].plot(envs_ts * 1000, meanbeat, color="k")
-ax[0].axis("off")
 
+# plot mean envelope
+ax[0].plot(envs_ts * 1000, meanbeat, color="k")
+
+# plot rasterplot
 ax[1].scatter(
     np.array(fs.flatten(spks)) * 1000, jit_x1, alpha=1, zorder=10, c="k", marker="|"
 )
+# plot kernel density rate estimations
 ax[1].fill_between(
     kdetime * 1000, np.zeros_like(meankde), meankde, color="darkgrey", alpha=1
 )
 
+# add labels
 ax[1].set_xlabel("Time [ms]")
 ax[1].set_ylabel("Rate [Hz]")
 
+# turn upper axis off
+ax[0].axis("off")
+
+# remove upper and right axis
 ax[1].spines["right"].set_visible(False)
 ax[1].spines["top"].set_visible(False)
 
-ax[1].set_xticks(range(0, 30, 5))
+# make axes nicer
+ax[1].set_xticks(range(0, 70, 5))
 ax[1].set_yticks(range(0, 35, 10))
-
 ax[1].spines.left.set_bounds((0, 30))
-ax[1].spines.bottom.set_bounds((0, 25))
+ax[1].spines.bottom.set_bounds((0, 65))
+
+# adjust label position
+ax[1].xaxis.set_label_coords(0.5, -0.2)
+
+# adjust plot margings
+plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0)
+
+# save figures
+fs.doublesave("../figures/beatcoupling")
 plt.show()
