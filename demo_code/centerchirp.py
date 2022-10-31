@@ -20,14 +20,14 @@ kdetime = np.linspace(
 )
 
 # compute kdes for every chirp-centered spiketrain
-singlecell_kdes = [fs.causal_kde1d(x, kdetime, 0.01) for x in singlecell_spikes]
+singlecell_kdes = [fs.causal_kde1d(x, kdetime, 0.002) for x in singlecell_spikes]
 
 # compute kde for population activity
-hompopulation_kdes = [fs.causal_kde1d(x, kdetime, 0.01) for x in hompopulation_spikes]
+hompopulation_kdes = [fs.causal_kde1d(x, kdetime, 0.002) for x in hompopulation_spikes]
 
 # compute mean kdes
 singlecell_mean = np.mean(singlecell_kdes, axis=0)
-hompopulation_mean = np.mean(hompopulation_kdes, axis=0)
+hompopulation_mean = np.mean(hompopulation_kdes, axis=0) / 6
 
 # sort by spike train length
 hompopulation_spikes = sorted(hompopulation_spikes, key=len, reverse=True)
@@ -36,8 +36,8 @@ hompopulation_spikes = sorted(hompopulation_spikes, key=len, reverse=True)
 fig, ax = plt.subplots()
 ax.eventplot(
     hompopulation_spikes,
-    lineoffsets=0.3,
-    linelengths=0.3,
+    lineoffsets=0.05,
+    linelengths=0.05,
     colors="black",
     alpha=1,
 )

@@ -541,8 +541,8 @@ def singlecell_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.1
-    after_t = 0.2
+    before_t = 0.15
+    after_t = 0.15
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -629,8 +629,8 @@ def hompopulation_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.1
-    after_t = 0.2
+    before_t = 0.15
+    after_t = 0.15
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -709,8 +709,10 @@ def singlecell_bts(data):
 
     # collect beat-centered spike times here
     spike_t = []
-    beats = []
-    times = []
+
+    # before and after padding
+    before_t = 0.15
+    after_t = 0.15
 
     # go through all chirp repros
     for repro in chirp_repros:
@@ -805,8 +807,6 @@ def singlecell_bts(data):
             # Center the time at the beat peak ---------------------------------------------
 
             # compute number of indices before and after chirp to include
-            before_t = 0.1
-            after_t = 0.2
             dt = time[1] - time[0]
             before_indices = np.round(before_t / dt)
             after_indices = np.round(after_t / dt)
@@ -828,6 +828,7 @@ def singlecell_bts(data):
                     print(tc.warn(f"Trial {i} Repro {repro} skipped, not enough data!"))
                     print(f"max index: {np.max(indices)}")
                     print(f"time length: {len(time)}")
+                    # embed()
                     continue
 
                 tmin = np.min(b_time)
@@ -857,8 +858,8 @@ def hompopulation_bts(data):
     spike_t = []
 
     # padding around beat
-    before_t = 0.1
-    after_t = 0.2
+    before_t = 0.15
+    after_t = 0.15
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
