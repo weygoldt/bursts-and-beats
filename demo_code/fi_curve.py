@@ -76,11 +76,21 @@ for key in sorted_trials:
         rate_per_contrast.append(rate)
     
     rates[key].append(np.mean(rate_per_contrast))
+    rates[key].append(np.std(rate_per_contrast))
 
-rates_with_con = rates.items()
-x, y = zip(*rates_with_con)
-for i in rates:
-    plt.scatter(i, rates[i][0])
+
+r = []
+c = []
+std = []
+for key in rates:
+    c.append(key)
+    r.append(rates[key][0])
+    std.append(rates[key][1])
+
+fig, ax = plt.subplots()
+ax.errorbar(c, r, yerr=std)
 plt.show()
+
+
 
 # firering rate and std for each space !!
