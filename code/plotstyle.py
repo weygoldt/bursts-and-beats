@@ -13,10 +13,20 @@ from matplotlib.colors import ListedColormap
 def PlotStyle(darkmode=False):
     class s:
 
-        lightcmap = cmocean.tools.lighten(cmocean.cm.haline, 0.8)
+        # lightcmap = cmocean.tools.lighten(cmocean.cm.haline, 0.8)
 
+        # units
         cm = 1 / 2.54
         mm = 1 / 25.4
+
+        # colors
+        black = "#1d1d1d"
+        darkblue = "#264653"
+        blue = "#2A7494"
+        green = "#8AB17D"
+        yellow = "#E9C46A"
+        orange = "#F4A261"
+        red = "#E86051"
 
         @classmethod
         def lims(cls, track1, track2):
@@ -219,10 +229,10 @@ def PlotStyle(darkmode=False):
     plt.rc("legend", fontsize=SMALL_SIZE)  # legend fontsize
     plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-    plt.rcParams["image.cmap"] = s.lightcmap
-    plt.rcParams["axes.xmargin"] = 0
+    # plt.rcParams["image.cmap"] = s.lightcmap
+    plt.rcParams["axes.xmargin"] = 0.15
     # plt.rcParams["figure.constrained_layout.use"] = True
-    plt.rcParams["axes.ymargin"] = 0
+    plt.rcParams["axes.ymargin"] = 0.15
     plt.rcParams["axes.titlelocation"] = "left"
     plt.rcParams["axes.titlesize"] = BIGGER_SIZE
     plt.rcParams["axes.titlepad"] = 12
