@@ -18,6 +18,7 @@ spikes = samd.trace_data("Spikes-1")[0]
 beat, time = samd.trace_data("LocalEOD-1")
 dt = time[1] - time[0]
 eod, time = samd.trace_data("EOD")
+stim_f = samd.metadata["RePro-Info"]["settings"]["deltaf"][0][0]
 
 pause = 5  # pause legth in seconds (see metadata)
 stim_dur = 30  # stim length in seconds (see metadata)
@@ -139,6 +140,18 @@ ax[1].scatter(
 # plot kernel density rate estimations
 ax[1].fill_between(
     kdetime * 1000, np.zeros_like(meankde), meankde, color="darkgrey", alpha=1
+)
+
+# add df
+plt.rcParams.update(
+    {
+        "text.usetex": True,
+        "font.family": "sans-serif",
+        "font.sans-serif": "Helvetica Now Text",
+    }
+)
+ax[0].text(
+    0, -1, r"$\Delta{{f}} = {} Hz$".format(int(stim_f)), font="stix", fontsize=12
 )
 
 # add labels
