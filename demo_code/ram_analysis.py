@@ -52,7 +52,7 @@ def spike_triggered_average(spikes, stimulus, dt, t_min=-0.1, t_max=0.1):
 
 # plot 15 seconds of Baseline activity 
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
-ram = d['FileStimulus_3']
+ram = d['FileStimulus_2']
 stimulie_rlx = ram.stimuli
 
 stas = []
@@ -61,7 +61,7 @@ for stim in stimulie_rlx:
     v, t = stim.trace_data('LocalEOD-1')
     spikes = stim.trace_data('Spikes-1')[0]
     dt = t[1]- t[0]
-    time, sta, sd, count = spike_triggered_average(spikes, v, dt, t_min=-0.001, t_max=0.001)
+    time, sta, sd, count = spike_triggered_average(spikes, v, dt, t_min=-0.01, t_max=0.01)
     stas.append(sta)
     spike_times.append(spikes)
 
@@ -69,6 +69,7 @@ mean_stas = np.mean(stas, axis=0)
 
 fig, ax = plt.subplots()
 ax.plot(time, mean_stas)
-ax.
+ax.set_xlabel("Time [ms]")
+ax.set_ylabel("Stimulus")
 plt.show()
 
