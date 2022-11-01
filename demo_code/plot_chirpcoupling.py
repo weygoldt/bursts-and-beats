@@ -7,7 +7,7 @@ import functions as fs
 from termcolors import TermColor as tc
 
 # get data
-d = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
+d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 fish_eodf = d.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
 chirp_repro = "Chirps_1"
 chirp_no = 0
@@ -120,7 +120,7 @@ for i in range(chirps.stimulus_count):
         # spike_t.append(c_time)
         centerchirp.append(c_env)
 
-for chirp, spike in zip(centerchirp[:5], spike_t[:5]):
+for chirp, spike in zip(centerchirp, spike_t):
     plt.plot(c_time, chirp)
     plt.scatter(spike, np.ones_like(spike) * -0.5, alpha=1)
 plt.show()

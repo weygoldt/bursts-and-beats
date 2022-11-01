@@ -13,10 +13,11 @@ d1 = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 d2 = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
 
 data = [d1, d2]
+spike_data = []
+rate_data = []
+time_data = []
 
-fig, ax = plt.subplots(1, 2, figsize=(24 * ps.cm, 12 * ps.cm))
-
-for a, d in zip(ax, data):
+for d in data:
 
     # extract centered spiketimes
     singlecell_spikes, time = fs.singlecell_cts(d)
@@ -44,18 +45,42 @@ for a, d in zip(ax, data):
     # sort by spike train length
     hompopulation_spikes = sorted(hompopulation_spikes, key=len, reverse=True)
 
-    # plot
+    spike_data.append(hompopulation_spikes)
+    rate_data.append(singlecell_mean)
+    time_data.append(kdetime)
+
+fig, ax = plt.subplots(1, 2, figsize=(24 * ps.cm, 12 * ps.cm))
+for a, spikes, rate, time in zip(ax, spike_data, rate_data, time_data):
+
     a.eventplot(
-        hompopulation_spikes,
+        spikes,
         lineoffsets=0.05,
         linelengths=0.05,
-        colors="black",
+        colors=ps.black,
         alpha=1,
     )
 
-    a.axvline(0, 0, 100, color="black", linestyle="dashed", lw=1)
-    a.plot(kdetime, hompopulation_mean, color="green", lw=2)
-    a.plot(kdetime, singlecell_mean, color="red", lw=2)
-    # ax.set_xlim(-0.08, 0.18)
+    # a.axvline(0, 0, 100, color=ps.black, linestyle="dashed", lw=1)
+    a.plot(time, rate, color=ps.red, lw=2)
 
+    a.set_xlim(-0.04, 0.1)
+
+    # turn upper axis off
+    # a.axis("off")
+
+    # remove upper and right axis
+    a.spines["right"].set_visible(False)
+    a.spines["top"].set_visible(False)
+
+    # make axes nicer
+    a.set_xticks(np.arange(-0.04, 0.10, 0.02))
+    a.set_yticks(np.arange(0, 45, 10))
+    a.spines.left.set_bounds((0, 40))
+    a.spines.bottom.set_bounds((-0.06, 0.12))
+
+# add labels
+fig.supxlabel("Chirp centered time [Hz]")
+fig.supylabel("Rate [Hz]")
+
+fs.doublesave("../figures/chirp_rasterplot")
 plt.show()
