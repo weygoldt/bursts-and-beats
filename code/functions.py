@@ -147,6 +147,7 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
 
 
 # Interspike interval functions
+# Baseline analysis
 
 
 def isis(spike_times):
@@ -371,6 +372,28 @@ def burst_detector(spike_times, isi_thresh, verbose=True):
         print(f"{tc.succ('Single spikes: ')}{len(single_spikes)} spikes")
 
     return single_spikes, burst_spikes, burst_start_stop
+
+
+def plot_baseline(ax, data, start=0.0, end=1.0):
+    """Ploting the first recorded Baseline Activity
+
+    Parameters
+    ----------
+    ax : matplotlib axis
+    data : rlx.Dataset
+    start : float, optional
+        start of the Baseline by default 0.0
+    end : float, optional
+        end of the Baseline, by default 1.0
+    """
+    bl = data.repro_runs("BaselineActivity")
+    v, t = bl[0].membrane_voltage()
+    spikes = bl[0].spikes()
+    ax.plot(t,v)
+    ax.set_xlabel('Time [s]')
+    ax.set_ylabel('Membrane voltage [mV]')
+    ax.scatter(spikes, np.ones_like(spikes)*np.max(v)+1)
+    ax.set_xlim(start, end)
 
 
 # Filters
