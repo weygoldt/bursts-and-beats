@@ -15,6 +15,7 @@ d2 = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
 data = [d1, d2]
 spike_data = []
 rate_data = []
+rate_stds = []
 time_data = []
 
 for d in data:
@@ -40,6 +41,7 @@ for d in data:
 
     # compute mean kdes
     singlecell_mean = np.mean(singlecell_kdes, axis=0)
+    singlecell_std = np.std(singlecell_kdes, axis=0)
     hompopulation_mean = np.mean(hompopulation_kdes, axis=0) / 6
 
     # sort by spike train length
@@ -47,40 +49,56 @@ for d in data:
 
     spike_data.append(hompopulation_spikes)
     rate_data.append(singlecell_mean)
+    rate_stds.append(singlecell_std)
     time_data.append(kdetime)
 
-fig, ax = plt.subplots(1, 2, figsize=(24 * ps.cm, 12 * ps.cm))
-for a, spikes, rate, time in zip(ax, spike_data, rate_data, time_data):
+plotheight = round((np.max(rate_data) * 1.2) / 10) * 10
+fig, ax = plt.subplots(1, 2, figsize=(24 * ps.cm, 12 * ps.cm), sharex=True, sharey=True)
+for a, spikes, rate, std, time in zip(ax, spike_data, rate_data, rate_stds, time_data):
+
+    offsets = plotheight / len(spikes)
+
+    # remove all spikes before and after limits
+    lower = -0.05
+    upper = 0.1
+    spikes = [np.array(s) for s in spikes]
+    spikes = [np.array(s) for s in spikes]
+    spikes = [s[(s > lower) & (s <= upper)] * 1000 for s in spikes]
+
+    # cut time and rate to limits
+    time = np.array(time)
+    rate = rate[(time > lower) & (time <= upper)]
+    # std = std[(time > lower) & (time <= upper)]
+    time = time[(time > lower) & (time <= upper)] * 1000
 
     a.eventplot(
         spikes,
-        lineoffsets=0.05,
-        linelengths=0.05,
-        colors=ps.black,
+        lineoffsets=offsets,
+        linelengths=offsets,
+        colors="darkgrey",
         alpha=1,
     )
 
-    # a.axvline(0, 0, 100, color=ps.black, linestyle="dashed", lw=1)
-    a.plot(time, rate, color=ps.red, lw=2)
-
-    a.set_xlim(-0.04, 0.1)
-
-    # turn upper axis off
-    # a.axis("off")
+    a.plot([0, 0], [0, plotheight], c=ps.black, lw=1, ls="dashed")
+    a.plot(time, rate, color=ps.black, lw=2)
+    # a.fill_between(time, rate - std, rate + std, alpha=0.5)
 
     # remove upper and right axis
     a.spines["right"].set_visible(False)
     a.spines["top"].set_visible(False)
 
     # make axes nicer
-    a.set_xticks(np.arange(-0.04, 0.10, 0.02))
-    a.set_yticks(np.arange(0, 45, 10))
-    a.spines.left.set_bounds((0, 40))
-    a.spines.bottom.set_bounds((-0.06, 0.12))
+    a.set_xticks(np.arange(-50, 150, 20))
+    a.set_yticks(np.arange(0, 55, 10))
+    a.spines.left.set_bounds((0, 50))
+    a.spines.bottom.set_bounds((-50, 100))
+
+    a.margins(0.05)  # 5% padding in all directions
 
 # add labels
-fig.supxlabel("Chirp centered time [Hz]")
-fig.supylabel("Rate [Hz]")
+fig.supxlabel("Chirp centered time [ms]", fontsize=14)
+fig.supylabel("Rate [Hz]", fontsize=14)
+plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0)
 
 fs.doublesave("../figures/chirp_rasterplot")
 plt.show()
