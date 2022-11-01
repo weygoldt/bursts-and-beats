@@ -41,7 +41,7 @@ def sort_reodfs(data):
     Returns
     -------
     dic
-        Dictionary with the relative EODs as keys, Items are the name of the trace  
+        Dictionary with the relative EODfs as keys, Items are the name of the trace  
     """
     r_eodf = []
     for chirp in data.repro_runs('Chirps'):
