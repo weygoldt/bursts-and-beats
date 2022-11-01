@@ -12,25 +12,20 @@ from termcolors import TermColor as tc
 
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 
+def plot_baseline(ax, data, start=0.0, end=1.0):
+    bl = data.repro_runs("BaselineActivity")
+    v, t = bl[0].membrane_voltage()
+    spikes = bl[0].spikes()
+    ax.plot(t,v)
+    ax.set_xlabel('time [s]')
+    ax.set_ylabel('membrane voltage [mV]')
+    ax.scatter(spikes, np.ones_like(spikes)*np.max(v)+1)
+    ax.set_xlim(start, end)
 
-bl = d["BaselineActivity_4"]
-#spikes = bl["Spikes"]
 
-v, t = bl.membrane_voltage()
-spikes = bl.spikes()
-fig, ax = plt.subplots()
-ax.plot(t,v)
-ax.set_xlabel('time [s]')
-ax.set_ylabel('membrane voltage [mV]')
-plt.plot(t,v)
-plt.show()
 
 fig1, ax1 = plt.subplots()
-ax1.plot(t,v)
-ax1.set_xlabel('time [s]')
-ax1.set_ylabel('membrane voltage [mV]')
-ax1.set_xlim(0, 1)
-plt.plot(t,v)
+plot_baseline(ax1, d, end=15.0)
 plt.show()
 
 single_spikes, burst_spikes, burst_start_stop = fs.burst_detector(spikes, 0.01)
