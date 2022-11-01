@@ -4,20 +4,28 @@ import rlxnix as rlx
 from scipy import interpolate
 
 import functions as fs
+from plotstyle import PlotStyle
 from termcolors import TermColor as tc
+
+ps = PlotStyle()
 
 # get data
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 fish_eodf = d.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
+
+# find all chirp repros
+chirp_repros = [i for i in d.repros if "Chirps" in i]
+
+# for chirp_repro in chirp_repros:
+
 chirp_repro = "Chirps_1"
-chirp_no = 0
+# chirp_no = 0
 chirps = d[chirp_repro]
 
 # collect data here
 spike_t = []
 centertime = []
 centerchirp = []
-
 
 # go through 16 trials
 for i in range(chirps.stimulus_count):
@@ -80,8 +88,8 @@ for i in range(chirps.stimulus_count):
     beat_p = 1 / beat_f
 
     # compute number of indices before and after chirp based on beat period
-    before_t = 2 * beat_p
-    after_t = 2 * beat_p
+    before_t = 6 * beat_p
+    after_t = 6 * beat_p
     dt = time[1] - time[0]
     before_indices = np.round(before_t / dt)
     after_indices = np.round(after_t / dt)
@@ -110,7 +118,7 @@ for i in range(chirps.stimulus_count):
         c_spike_indices = [fs.find_closest(c_time, x) for x in c_spikes]
 
         # make new centered time array
-        c_time = c_time = time[indices] - tmin
+        c_time = time[indices] - (tmin + (tmax - tmin) / 2)
 
         # extract spike timestamps from centered time
         c_spikes_centered = c_time[c_spike_indices]
@@ -120,7 +128,63 @@ for i in range(chirps.stimulus_count):
         # spike_t.append(c_time)
         centerchirp.append(c_env)
 
+# compute rate
+kdetime = np.linspace(c_time[0], c_time[-1], 500)
+rate = np.array([fs.acausal_kde1d(s, kdetime, 0.005) for s in spike_t])
+meanrate = np.mean(rate, axis=0)
+
 for chirp, spike in zip(centerchirp, spike_t):
     plt.plot(c_time, chirp)
     plt.scatter(spike, np.ones_like(spike) * -0.5, alpha=1)
+plt.plot(kdetime, rate / 1000 - 0.9)
+plt.show()
+
+height = np.max(meanrate) * 1.2
+tickscaler = np.max(meanrate) / len(spike_t)
+
+fig, ax = plt.subplots(
+    3,
+    1,
+    figsize=(24 * ps.cm, 12 * ps.cm),
+    sharex=True,
+    gridspec_kw={"height_ratios": [1, 1, 1]},
+)
+
+for chirp, spike in zip(centerchirp, spike_t):
+    ax[0].plot(c_time, chirp, c="lightgrey", lw=1, alpha=0.1)
+ax[0].plot(c_time, centerchirp[5], c=ps.black, lw=1.5)
+ax[0].axis("off")
+ax[1].eventplot(
+    spike_t,
+    linewidths=2,
+    colors=ps.black,
+)
+
+ax[1].spines["right"].set_visible(False)
+ax[1].spines["top"].set_visible(False)
+ax[1].spines["bottom"].set_visible(False)
+ax[1].set_ylabel("Trial")
+
+ax[1].spines.left.set_bounds((0, 100))
+
+ax[2].fill_between(kdetime, np.zeros_like(meanrate), meanrate, color="darkgrey")
+
+# remove upper and right axis
+ax[2].spines["right"].set_visible(False)
+ax[2].spines["top"].set_visible(False)
+
+# make axes nicer
+ax[2].set_xticks(range(-0.2, 0.25, 0.5))
+ax[2].set_yticks(range(0, 35, 10))
+ax[2].spines.left.set_bounds((0, 30))
+ax[2].spines.bottom.set_bounds((-0.2, 0.2))
+
+ax[2].set_ylabel("Rate [Hz]")
+ax[2].set_xlabel("Chirp centered time [ms]")
+
+# adjust label position
+# ax[1].xaxis.set_label_coords(0.5, -0.2)
+
+# adjust plot margings
+plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0)
 plt.show()

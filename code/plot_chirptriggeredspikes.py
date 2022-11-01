@@ -88,7 +88,7 @@ for a, spikes, rate, std, time in zip(ax, spike_data, rate_data, rate_stds, time
     a.spines["top"].set_visible(False)
 
     # make axes nicer
-    a.set_xticks(np.arange(-50, 150, 20))
+    a.set_xticks(np.arange(-50, 150, 25))
     a.set_yticks(np.arange(0, 55, 10))
     a.spines.left.set_bounds((0, 50))
     a.spines.bottom.set_bounds((-50, 100))
