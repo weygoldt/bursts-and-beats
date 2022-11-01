@@ -15,8 +15,18 @@ def PlotStyle(darkmode=False):
 
         # lightcmap = cmocean.tools.lighten(cmocean.cm.haline, 0.8)
 
+        # units
         cm = 1 / 2.54
         mm = 1 / 25.4
+
+        # colors
+        black = "#1d1d1d"
+        darkblue = "#264653"
+        blue = "#2A7494"
+        green = "#8AB17D"
+        yellow = "#E9C46A"
+        orange = "#F4A261"
+        red = "#E86051"
 
         @classmethod
         def lims(cls, track1, track2):

@@ -139,8 +139,10 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
         peaks.append(peak)
 
     # interpolate between peaks
-    interp = interpolate.interp1d(time[peaks], beat[peaks], kind="cubic")
-    envelope = interp(time[peaks[0] : peaks[-1]])
+    interp = interpolate.interp1d(
+        time[peaks], beat[peaks], kind="cubic", fill_value="extrapolate"
+    )
+    envelope = interp(time)
     envelope_time = time[peaks[0] : peaks[-1]]
 
     return beat, envelope, envelope_time
@@ -596,8 +598,8 @@ def singlecell_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.12
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -684,8 +686,8 @@ def hompopulation_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.12
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -766,8 +768,8 @@ def singlecell_bts(data):
     spike_t = []
 
     # before and after padding
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.06
 
     # go through all chirp repros
     for repro in chirp_repros:
@@ -913,8 +915,8 @@ def hompopulation_bts(data):
     spike_t = []
 
     # padding around beat
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.06
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
