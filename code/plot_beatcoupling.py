@@ -131,11 +131,16 @@ for e in envs:
     ax[0].plot(envs_ts * 1000, e, c="darkgrey", alpha=0.1)
 
 # plot mean envelope
-ax[0].plot(envs_ts * 1000, meanbeat, color="k")
+ax[0].plot(envs_ts * 1000, meanbeat, color=ps.black)
 
 # plot rasterplot
 ax[1].scatter(
-    np.array(fs.flatten(spks)) * 1000, jit_x1, alpha=1, zorder=10, c="k", marker="|"
+    np.array(fs.flatten(spks)) * 1000,
+    jit_x1,
+    alpha=1,
+    zorder=10,
+    c=ps.black,
+    marker="|",
 )
 # plot kernel density rate estimations
 ax[1].fill_between(
