@@ -4,7 +4,7 @@ import numpy as np
 import functions as fs
 from plotstyle import PlotStyle
 
-PlotStyle()
+ps = PlotStyle()
 
 # make chirping individual (sender)
 time, eod_send, _, _ = fs.create_chirp()
@@ -18,7 +18,7 @@ eod_send = 1 * np.sin(2 * np.pi * eodf_send * time)
 beat, envelope, envelope_time = fs.beat_envelope(eod_send, eod_rec, 500, eodf_rec, time)
 
 # plot
-fig, ax = plt.subplots(3, 1, sharex=True, figsize=(12, 6))
+fig, ax = plt.subplots(3, 1, sharex=True, figsize=(8, 5.5))
 ax[0].plot(time, eod_send, lw=1, c="k")
 ax[1].plot(time, eod_rec, lw=1, c="k")
 ax[2].plot(time, beat, lw=1, c="k")
@@ -42,5 +42,5 @@ for a in ax:
 
 plt.subplots_adjust(left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0, hspace=0.8)
 
-fs.doublesave("../figures/beat_without_chirp")
+fs.doublesave("figures/beat_without_chirp")
 plt.show()

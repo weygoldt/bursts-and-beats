@@ -196,7 +196,7 @@ def isih(isis, bin_width):
     return pdf, centers
 
 
-def plot_isih(ax, isis, binwidth, color=color):
+def plot_isih(ax, isis, binwidth):
     """
     Plot the interspike interval histogram.
 
@@ -217,7 +217,7 @@ def plot_isih(ax, isis, binwidth, color=color):
     # basic statistics
     sdisi = np.std(isis)
     cv = sdisi / misi
-    ax.bar(centers * 1000, pdf, width=binwidth * 1000, facecolor=color)  # plot histogram with ISIs in ms
+    ax.bar(centers * 1000, pdf, width=binwidth * 1000)  # plot histogram with ISIs in ms
 
     ax.set_xlabel("Interspike interval [ms]")
     ax.set_ylabel("p(ISI) [1/s]")
