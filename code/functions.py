@@ -389,25 +389,25 @@ def plot_baseline(ax, data, start=0.0, end=1.0):
     bl = data.repro_runs("BaselineActivity")
     v, t = bl[0].membrane_voltage()
     spikes = bl[0].spikes()
-    ax.plot(t,v)
-    ax.set_xlabel('Time [s]')
-    ax.set_ylabel('Membrane voltage [mV]')
-    ax.scatter(spikes, np.ones_like(spikes)*np.max(v)+1)
+    ax.plot(t, v)
+    ax.set_xlabel("Time [s]")
+    ax.set_ylabel("Membrane voltage [mV]")
+    ax.scatter(spikes, np.ones_like(spikes) * np.max(v) + 1)
     ax.set_xlim(start, end)
 
 
 def spike_triggered_average(spikes, stimulus, dt, t_min=-0.1, t_max=0.1):
-    """ Estimate the spike-triggered-average (STA) stimulus.
+    """Estimate the spike-triggered-average (STA) stimulus.
     Parameters
     ----------
     spikes: ndarray of floats
     Spike times of a single trial. stimulus: ndarray of floats
-    The stimulus. 
+    The stimulus.
     dt: float
-    Temporal resolution of the stimulus. 
+    Temporal resolution of the stimulus.
     t_min: float
     The time before the spike that should be taken into account.
-    Same unit as `dt`. 
+    Same unit as `dt`.
     t_max: float
     The time after the spike that should be taken into account. Same unit as `dt`.
     Returns
@@ -416,21 +416,25 @@ def spike_triggered_average(spikes, stimulus, dt, t_min=-0.1, t_max=0.1):
     Time axis of the STA. sta: ndarray of floats
     Spike-triggered-average. sd: ndarray of floats
     Corresponding standard deviation. count: int
-    Number of spikes used to computed the STA. """
+    Number of spikes used to computed the STA."""
     count = 0
-    time = np.arange(t_min, t_max, dt)  # time for the STA                              
-    snippets = np.zeros((len(time), len(spikes))) 
-    for t in spikes:                                                    # for each spike
-        min_index = int(np.round((t+t_min)/dt))                             # start index of snippet # end index of snippet
-        max_index = min_index + len(time)                                       # snippet not fully contained in stimulus, skip it:
+    time = np.arange(t_min, t_max, dt)  # time for the STA
+    snippets = np.zeros((len(time), len(spikes)))
+    for t in spikes:  # for each spike
+        min_index = int(
+            np.round((t + t_min) / dt)
+        )  # start index of snippet # end index of snippet
+        max_index = min_index + len(
+            time
+        )  # snippet not fully contained in stimulus, skip it:
         if (min_index < 0) or (max_index > len(stimulus)):
             continue
 
-        snippets[:,count] = stimulus[min_index:max_index] # store snippet
+        snippets[:, count] = stimulus[min_index:max_index]  # store snippet
         count += 1
 
-    sta = np.mean(snippets[:,:count], axis=1) # average and
-    sd = np.std(snippets[:,:count], axis=1) # standard deviation over all snippets
+    sta = np.mean(snippets[:, :count], axis=1)  # average and
+    sd = np.std(snippets[:, :count], axis=1)  # standard deviation over all snippets
     return time, sta, sd, count
 
 

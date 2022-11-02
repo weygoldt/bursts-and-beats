@@ -16,17 +16,18 @@ fish_eodf = d.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
 
 reodfs = fs.sort_reodfs(d)
 
+# get all chirp repros with multiple of 1
 chirp_repros = []
 for key in reodfs:
     if int(float(key)) == 1:
         chirp_repros.append(reodfs[key])
 
 # find all chirp repros
-chirp_repros = [i for i in d.repros if "Chirps" in i]
+# chirp_repros = [i for i in d.repros if "Chirps" in i]
 
 # for chirp_repro in chirp_repros:
 
-chirp_repro = "Chirps_6"
+chirp_repro = chirp_repros[0][0]
 # chirp_repro = "Chirps_5"
 # chirp_no = 0
 chirps = d[chirp_repro]
@@ -228,5 +229,5 @@ if saveplot:
 
     # adjust plot margings
     plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0.1)
-    fs.doublesave("../figures/chirp_triggered_spikes_4")
+    fs.doublesave("../figures/chirp_triggered_spikes_1")
     plt.show()
