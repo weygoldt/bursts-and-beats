@@ -135,7 +135,7 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
 
         # make ranges from boundaries
         b_full = np.arange(b[0], b[1])
-        peak = b_full[lower_eod_rect[b_full] == np.max(lower_eod_rect[b_full])][0]
+        peak = b_full[beat[b_full] == np.max(beat[b_full])][0]
         peaks.append(peak)
 
     # interpolate between peaks

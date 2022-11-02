@@ -12,13 +12,14 @@ ps = PlotStyle()
 data = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 sams = [i for i in data.repros if "SAM" in i]
 sams = sams[2:]
-sam = sams[2]
+sam = sams[1]
 samd = data[sam]
 spikes = samd.trace_data("Spikes-1")[0]
 beat, time = samd.trace_data("LocalEOD-1")
 dt = time[1] - time[0]
 eod, time = samd.trace_data("EOD")
 stim_f = samd.metadata["RePro-Info"]["settings"]["deltaf"][0][0]
+fish_eodf = data.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
 
 pause = 5  # pause legth in seconds (see metadata)
 stim_dur = 30  # stim length in seconds (see metadata)
@@ -32,7 +33,7 @@ validspikes = spikes[(spikes > pause) & (spikes < stim_dur)]
 # compute envelope
 
 # rectification
-lower_eod_rect = eod.clip(min=0)
+lower_eod_rect = eod.clip(max=0)
 
 # find where rectified lower EOD is now 0
 idx = np.arange(len(lower_eod_rect))
@@ -52,7 +53,7 @@ for b in bounds:
 
     # make ranges from boundaries
     b_full = np.arange(b[0], b[1])
-    peak = b_full[lower_eod_rect[b_full] == np.max(lower_eod_rect[b_full])][0]
+    peak = b_full[beat[b_full] == np.min(beat[b_full])][0]
     peaks.append(peak)
 
 # fix noisy peaks
@@ -98,11 +99,13 @@ for i, ii in zip(p_indices, p_indices[num_period:]):
     s = s - tmin  # norm spikes to start at 0
 
     # nanpad envelope
-    if len(e) != len(envs_ts):
+    if len(e) < len(envs_ts):
         dright = fs.find_closest(envs_ts, tmax - tmin)
         dnan = len(envs_ts) - dright
         nans = np.full(dnan, np.nan)
         e = np.append(e, nans)
+    elif len(e) > len(envs_ts):
+        e = e[: len(envs_ts)]
 
     # add to lists
     envs.append(e)
@@ -155,8 +158,24 @@ plt.rcParams.update(
         "font.sans-serif": "Helvetica Now Text",
     }
 )
+posx = 0.02
+posy = 0.91
+rel_eodf = np.round((fish_eodf + stim_f) / fish_eodf, decimals=2)
 ax[0].text(
-    0, -1, r"$\Delta{{f}} = {} Hz$".format(int(stim_f)), font="stix", fontsize=12
+    posx,
+    posy,
+    r"EOD$f_{{rel}} = {}$".format(rel_eodf),
+    font="stix",
+    fontsize=12,
+    transform=plt.gcf().transFigure,
+)
+ax[0].text(
+    posx,
+    posy - 0.06,
+    r"$f_{{Beat}} = {}$ Hz".format(int(stim_f)),
+    font="stix",
+    fontsize=12,
+    transform=plt.gcf().transFigure,
 )
 
 # add labels
@@ -171,10 +190,10 @@ ax[1].spines["right"].set_visible(False)
 ax[1].spines["top"].set_visible(False)
 
 # make axes nicer
-ax[1].set_xticks(range(0, 70, 5))
-ax[1].set_yticks(range(0, 35, 10))
-ax[1].spines.left.set_bounds((0, 30))
-ax[1].spines.bottom.set_bounds((0, 65))
+ax[1].set_xticks(range(0, 135, 10))
+ax[1].set_yticks(range(0, 45, 10))
+ax[1].spines.left.set_bounds((0, 40))
+ax[1].spines.bottom.set_bounds((0, 130))
 
 # adjust label position
 ax[1].xaxis.set_label_coords(0.5, -0.2)
@@ -183,5 +202,5 @@ ax[1].xaxis.set_label_coords(0.5, -0.2)
 plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0)
 
 # save figures
-fs.doublesave("../figures/beatcoupling")
+fs.doublesave("../figures/beatcoupling_1")
 plt.show()

@@ -230,9 +230,9 @@ def PlotStyle(darkmode=False):
     plt.rc("figure", titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
     # plt.rcParams["image.cmap"] = s.lightcmap
-    plt.rcParams["axes.xmargin"] = 0.15
+    plt.rcParams["axes.xmargin"] = 0.05
     # plt.rcParams["figure.constrained_layout.use"] = True
-    plt.rcParams["axes.ymargin"] = 0.15
+    plt.rcParams["axes.ymargin"] = 0.05
     plt.rcParams["axes.titlelocation"] = "left"
     plt.rcParams["axes.titlesize"] = BIGGER_SIZE
     plt.rcParams["axes.titlepad"] = 12
