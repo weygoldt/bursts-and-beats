@@ -155,9 +155,7 @@ plt.rcParams.update(
         "font.sans-serif": "Helvetica Now Text",
     }
 )
-ax[0].text(
-    0, -1, r"$\Delta{{f}} = {} Hz$".format(int(stim_f)), font="stix", fontsize=12
-)
+ax[0].text(0, -1, r"$f_{{Beat}} = {} Hz$".format(int(stim_f)), font="stix", fontsize=12)
 
 # add labels
 ax[1].set_xlabel("Time [ms]")

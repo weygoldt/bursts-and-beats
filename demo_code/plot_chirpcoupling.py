@@ -8,6 +8,7 @@ from plotstyle import PlotStyle
 from termcolors import TermColor as tc
 
 ps = PlotStyle()
+saveplot = True
 
 # get data
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
@@ -19,6 +20,7 @@ chirp_repros = [i for i in d.repros if "Chirps" in i]
 # for chirp_repro in chirp_repros:
 
 chirp_repro = "Chirps_1"
+# chirp_repro = "Chirps_5"
 # chirp_no = 0
 chirps = d[chirp_repro]
 
@@ -133,58 +135,79 @@ kdetime = np.linspace(c_time[0], c_time[-1], 500)
 rate = np.array([fs.acausal_kde1d(s, kdetime, 0.005) for s in spike_t])
 meanrate = np.mean(rate, axis=0)
 
+fig, ax = plt.subplots(2, 1, sharex=True)
 for chirp, spike in zip(centerchirp, spike_t):
-    plt.plot(c_time, chirp)
-    plt.scatter(spike, np.ones_like(spike) * -0.5, alpha=1)
-plt.plot(kdetime, rate / 1000 - 0.9)
+    ax[0].plot(c_time, chirp)
+    ax[0].scatter(spike, np.ones_like(spike) * -0.5, alpha=1)
+ax[1].plot(kdetime, meanrate)
 plt.show()
 
-height = np.max(meanrate) * 1.2
-tickscaler = np.max(meanrate) / len(spike_t)
+if saveplot:
+    height = np.max(meanrate) * 1.2
+    tickscaler = np.max(meanrate) / len(spike_t)
 
-fig, ax = plt.subplots(
-    3,
-    1,
-    figsize=(24 * ps.cm, 12 * ps.cm),
-    sharex=True,
-    gridspec_kw={"height_ratios": [1, 1, 1]},
-)
+    fig, ax = plt.subplots(
+        3,
+        1,
+        figsize=(24 * ps.cm, 12 * ps.cm),
+        sharex=True,
+        gridspec_kw={"height_ratios": [1, 1, 1]},
+    )
 
-for chirp, spike in zip(centerchirp, spike_t):
-    ax[0].plot(c_time, chirp, c="lightgrey", lw=1, alpha=0.1)
-ax[0].plot(c_time, centerchirp[5], c=ps.black, lw=1.5)
-ax[0].axis("off")
-ax[1].eventplot(
-    spike_t,
-    linewidths=2,
-    colors=ps.black,
-)
+    for chirp, spike in zip(centerchirp, spike_t):
+        ax[0].plot(c_time, chirp, c="lightgrey", lw=1, alpha=0.1)
+    ax[0].plot(c_time, centerchirp[5], c=ps.black, lw=1.5)
+    ax[0].axis("off")
 
-ax[1].spines["right"].set_visible(False)
-ax[1].spines["top"].set_visible(False)
-ax[1].spines["bottom"].set_visible(False)
-ax[1].set_ylabel("Trial")
+    # add df
+    plt.rcParams.update(
+        {
+            "text.usetex": True,
+            "font.family": "sans-serif",
+            "font.sans-serif": "Helvetica Now Text",
+        }
+    )
+    ax[0].text(
+        0,
+        0,
+        r"$EODf_{{rel}} = {} Hz$".format(int(chirps.relative_eodf)),
+        font="stix",
+        fontsize=12,
+    )
 
-ax[1].spines.left.set_bounds((0, 100))
+    ax[1].eventplot(
+        spike_t,
+        linewidths=2,
+        colors=ps.black,
+    )
 
-ax[2].fill_between(kdetime, np.zeros_like(meanrate), meanrate, color="darkgrey")
+    ax[1].spines["right"].set_visible(False)
+    ax[1].spines["top"].set_visible(False)
+    ax[1].spines["bottom"].set_visible(False)
+    ax[1].tick_params(bottom=False)
+    ax[1].set_ylabel("Trial")
 
-# remove upper and right axis
-ax[2].spines["right"].set_visible(False)
-ax[2].spines["top"].set_visible(False)
+    ax[1].spines.left.set_bounds((0, 100))
 
-# make axes nicer
-ax[2].set_xticks(range(-0.2, 0.25, 0.5))
-ax[2].set_yticks(range(0, 35, 10))
-ax[2].spines.left.set_bounds((0, 30))
-ax[2].spines.bottom.set_bounds((-0.2, 0.2))
+    ax[2].fill_between(kdetime, np.zeros_like(meanrate), meanrate, color="darkgrey")
 
-ax[2].set_ylabel("Rate [Hz]")
-ax[2].set_xlabel("Chirp centered time [ms]")
+    # remove upper and right axis
+    ax[2].spines["right"].set_visible(False)
+    ax[2].spines["top"].set_visible(False)
 
-# adjust label position
-# ax[1].xaxis.set_label_coords(0.5, -0.2)
+    # make axes nicer
+    ax[2].set_xticks(np.arange(-0.2, 0.25, 0.05))
+    ax[2].spines.bottom.set_bounds((-0.2, 0.2))
+    ax[2].set_yticks(np.arange(0, 35, 10))
+    ax[2].spines.left.set_bounds((0, 30))
 
-# adjust plot margings
-plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0)
-plt.show()
+    ax[2].set_ylabel("Rate [Hz]")
+    ax[2].set_xlabel("Chirp centered time [ms]")
+
+    # adjust label position
+    # ax[1].xaxis.set_label_coords(0.5, -0.2)
+
+    # adjust plot margings
+    plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0.1)
+    fs.doublesave("../figures/chirp_triggered_spikes")
+    plt.show()
