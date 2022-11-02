@@ -107,6 +107,6 @@ plt.subplots_adjust(left=0.1, right=1, top=0.99, bottom=0.1, hspace=0)
 
 # set labels and save to file
 ax.set_ylabel("Firing rate [Hz]")
-ax.set_xlabel("Contrast")
+ax.set_xlabel("Contrast [%]")
 fs.doublesave("../figures/ficurve")
 plt.show()
