@@ -1,16 +1,15 @@
 %PDF-1.4
 %¬Ü «º
 1 0 obj
-<< /Pages 2 0 R /Type /Catalog >>
+<< /Type /Catalog /Pages 2 0 R >>
 endobj
 8 0 obj
-<< /ExtGState 4 0 R /Font 3 0 R /Pattern 5 0 R
-/ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] /Shading 6 0 R
-/XObject 7 0 R >>
+<< /Font 3 0 R /XObject 7 0 R /ExtGState 4 0 R /Pattern 5 0 R
+/Shading 6 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ] >>
 endobj
 11 0 obj
-<< /Annots 10 0 R /Contents 9 0 R /MediaBox [ 0 0 532.8 489.6 ]
-/Parent 2 0 R /Resources 8 0 R /Type /Page >>
+<< /Type /Page /Parent 2 0 R /Resources 8 0 R
+/MediaBox [ 0 0 532.8 489.6 ] /Contents 9 0 R /Annots 10 0 R >>
 endobj
 9 0 obj
 << /Length 12 0 R >>
@@ -4049,7 +4048,8 @@ Q q /A3 gs 0 g 1 j 1 w 0 G 0 g
 B
 q
 1 0 -0 1 49.740625 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.03) ] TJ
 ET
@@ -4061,7 +4061,8 @@ Q
 B
 q
 1 0 -0 1 118.560625 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.02) ] TJ
 ET
@@ -4073,7 +4074,8 @@ Q
 B
 q
 1 0 -0 1 187.380625 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.01) ] TJ
 ET
@@ -4085,7 +4087,8 @@ Q
 B
 q
 1 0 -0 1 260.81 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.00) ] TJ
 ET
@@ -4096,7 +4099,8 @@ Q
 B
 q
 1 0 -0 1 329.63 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.01) ] TJ
 ET
@@ -4107,7 +4111,8 @@ Q
 B
 q
 1 0 -0 1 398.45 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.02) ] TJ
 ET
@@ -4118,14 +4123,16 @@ Q
 B
 q
 1 0 -0 1 467.27 36.996625 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.03) ] TJ
 ET
 Q
 q
 1 0 -0 1 240.263125 20.840375 cm
-BT /F1 13 Tf
+BT
+/F1 13 Tf
 0 0 Td
 [ (T) 30.0480769231 (ime [ms]) ] TJ
 ET
@@ -4136,7 +4143,8 @@ Q
 B
 q
 1 0 -0 1 24.38125 49.6763125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.20) ] TJ
 ET
@@ -4148,7 +4156,8 @@ Q
 B
 q
 1 0 -0 1 24.38125 96.8003125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.15) ] TJ
 ET
@@ -4160,7 +4169,8 @@ Q
 B
 q
 1 0 -0 1 24.38125 143.9243125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.10) ] TJ
 ET
@@ -4172,7 +4182,8 @@ Q
 B
 q
 1 0 -0 1 24.38125 191.0483125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 9.216796875 0 Td
 [ (0.05) ] TJ
 ET
@@ -4184,7 +4195,8 @@ Q
 B
 q
 1 0 -0 1 33.6 238.1723125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.00) ] TJ
 ET
@@ -4195,7 +4207,8 @@ Q
 B
 q
 1 0 -0 1 33.6 285.2963125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.05) ] TJ
 ET
@@ -4206,7 +4219,8 @@ Q
 B
 q
 1 0 -0 1 33.6 332.4203125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.10) ] TJ
 ET
@@ -4217,7 +4231,8 @@ Q
 B
 q
 1 0 -0 1 33.6 379.5443125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.15) ] TJ
 ET
@@ -4228,14 +4243,16 @@ Q
 B
 q
 1 0 -0 1 33.6 426.6683125 cm
-BT /F1 11 Tf
+BT
+/F1 11 Tf
 0 0 Td
 [ (0.20) ] TJ
 ET
 Q
 q
 0 1 -1 0 17.678125 214.1098125 cm
-BT /F1 13 Tf
+BT
+/F1 13 Tf
 0 0 Td
 [ (Stimulus) ] TJ
 ET
@@ -4725,7 +4742,7 @@ f
 endstream
 endobj
 26 0 obj
-<< /BBox [ -1021 -463 1794 1233 ] /Length 54 /Subtype /Form /Type /XObject
+<< /Type /XObject /Subtype /Form /BBox [ -1021 -463 1794 1233 ] /Length 54
 >>
 stream
 
@@ -4966,19 +4983,20 @@ f
 endstream
 endobj
 15 0 obj
-<< /BaseFont /BMQQDV+DejaVuSans /CharProcs 16 0 R
-/Encoding <<
+<< /Type /Font /BaseFont /BMQQDV+DejaVuSans /FirstChar 0 /LastChar 255
+/FontDescriptor 14 0 R /Subtype /Type3 /Name /BMQQDV+DejaVuSans
+/FontBBox [ -1021 -463 1794 1233 ] /FontMatrix [ 0.001 0 0 0.001 0 0 ]
+/CharProcs 16 0 R
+/Encoding << /Type /Encoding
 /Differences [ 32 /space 46 /period 48 /zero /one /two /three 53 /five 83 /S /T 91
 /bracketleft 93 /bracketright 101 /e 105 /i 108 /l /m 115 /s /t /u ]
-/Type /Encoding >>
-/FirstChar 0 /FontBBox [ -1021 -463 1794 1233 ] /FontDescriptor 14 0 R
-/FontMatrix [ 0.001 0 0 0.001 0 0 ] /LastChar 255 /Name /BMQQDV+DejaVuSans
-/Subtype /Type3 /Type /Font /Widths 13 0 R >>
+>>
+/Widths 13 0 R >>
 endobj
 14 0 obj
-<< /Ascent 929 /CapHeight 0 /Descent -236 /Flags 32
-/FontBBox [ -1021 -463 1794 1233 ] /FontName /BMQQDV+DejaVuSans
-/ItalicAngle 0 /MaxWidth 1342 /StemV 0 /Type /FontDescriptor /XHeight 0 >>
+<< /Type /FontDescriptor /FontName /BMQQDV+DejaVuSans /Flags 32
+/FontBBox [ -1021 -463 1794 1233 ] /Ascent 929 /Descent -236 /CapHeight 0
+/XHeight 0 /ItalicAngle 0 /StemV 0 /MaxWidth 1342 >>
 endobj
 13 0 obj
 [ 600 600 600 600 600 600 600 600 600 600 600 600 600 600 600 600 600 600
@@ -5006,10 +5024,10 @@ endobj
 << /F1 15 0 R >>
 endobj
 4 0 obj
-<< /A1 << /CA 0 /Type /ExtGState /ca 1 >>
-/A2 << /CA 1 /Type /ExtGState /ca 0.3 >>
-/A3 << /CA 1 /Type /ExtGState /ca 1 >>
-/A4 << /CA 0.6 /Type /ExtGState /ca 1 >> >>
+<< /A1 << /Type /ExtGState /CA 0 /ca 1 >>
+/A2 << /Type /ExtGState /CA 1 /ca 0.3 >>
+/A3 << /Type /ExtGState /CA 1 /ca 1 >>
+/A4 << /Type /ExtGState /CA 0.6 /ca 1 >> >>
 endobj
 5 0 obj
 << >>
@@ -5021,12 +5039,12 @@ endobj
 << /F1-DejaVuSans-minus 26 0 R >>
 endobj
 2 0 obj
-<< /Count 1 /Kids [ 11 0 R ] /Type /Pages >>
+<< /Type /Pages /Kids [ 11 0 R ] /Count 1 >>
 endobj
 36 0 obj
-<< /CreationDate (D:20221102100311+02'00')
-/Creator (Matplotlib v3.5.3, https://matplotlib.org)
-/Producer (Matplotlib pdf backend v3.5.3) >>
+<< /Creator (Matplotlib v3.6.1, https://matplotlib.org)
+/Producer (Matplotlib pdf backend v3.6.1)
+/CreationDate (D:20221102101039+02'00') >>
 endobj
 xref
 0 37
@@ -5068,7 +5086,7 @@ xref
 0000110466 00000 n 
 0000113281 00000 n 
 trailer
-<< /Info 36 0 R /Root 1 0 R /Size 37 >>
+<< /Size 37 /Root 1 0 R /Info 36 0 R >>
 startxref
 113438
 %%EOF
