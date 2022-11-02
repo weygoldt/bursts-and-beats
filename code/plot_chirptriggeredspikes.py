@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
+from tqdm import tqdm
 
 import functions as fs
 from plotstyle import PlotStyle
@@ -18,7 +19,7 @@ rate_data = []
 rate_stds = []
 time_data = []
 
-for d in data:
+for d in tqdm(data):
 
     # extract centered spiketimes
     singlecell_spikes, time = fs.singlecell_cts(d)
@@ -54,7 +55,9 @@ for d in data:
 
 plotheight = round((np.max(rate_data) * 1.2) / 10) * 10
 fig, ax = plt.subplots(1, 2, figsize=(24 * ps.cm, 12 * ps.cm), sharex=True, sharey=True)
-for a, spikes, rate, std, time in zip(ax, spike_data, rate_data, rate_stds, time_data):
+for a, spikes, rate, std, time in tqdm(
+    zip(ax, spike_data, rate_data, rate_stds, time_data)
+):
 
     offsets = plotheight / len(spikes)
 

@@ -110,12 +110,7 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     beat = sender_eod + receiver_eod
 
     # determine which is higher
-    if sender_eodf > receiver_eodf:
-        lower_eod = receiver_eod
-    elif sender_eodf < receiver_eodf:
-        lower_eod = sender_eod
-    else:
-        print("Error: Sender and receiver EODf are the same!")
+    lower_eod = receiver_eod if receiver_eodf < sender_eodf else sender_eod
 
     # rectification
     lower_eod_rect = lower_eod.clip(min=0)
@@ -129,6 +124,8 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     diffs = np.append(diffs, 0)
     zerocrossings = zero_idx[diffs > 1]
 
+    # embed()
+
     # calculate boundaries
     bounds = [[x, y] for x, y in zip(zerocrossings, zerocrossings[1:])]
 
@@ -138,7 +135,7 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
 
         # make ranges from boundaries
         b_full = np.arange(b[0], b[1])
-        peak = b_full[lower_eod_rect[b_full] == np.max(lower_eod_rect[b_full])][0]
+        peak = b_full[beat[b_full] == np.max(beat[b_full])][0]
         peaks.append(peak)
 
     # interpolate between peaks

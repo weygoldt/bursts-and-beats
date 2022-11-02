@@ -103,7 +103,7 @@ ax.spines.left.set_bounds((0, 20))
 ax.spines.bottom.set_bounds((-30, 30))
 
 # adjust plot margings
-plt.subplots_adjust(left=0.1, right=1, top=0.99, bottom=0.12, hspace=0)
+plt.subplots_adjust(left=0.1, right=1, top=0.98, bottom=0.12, hspace=0)
 
 # set labels and save to file
 ax.set_ylabel("Firing rate [Hz]")
