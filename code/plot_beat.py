@@ -43,7 +43,7 @@ ax[2].set_ylim(-2.1, 2.1)
 
 ax[0].text( 0.0, 1.15, f"Chirping sender: {eodf_send} Hz")
 ax[1].text( 0.0, 0.25, f"Receiver: {eodf_rec} Hz",)
-ax[2].text(0.0, 1.4, f"Amplitude modulation: {eodf_rec+eodf_send} Hz",)
+ax[2].text(0.0, 1.4, f"Beat: {eodf_rec+eodf_send} Hz",)
 
 # remove axes
 for a in ax:
@@ -51,5 +51,5 @@ for a in ax:
 
 plt.subplots_adjust(left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0.196, hspace=0.196)
 
-#fs.doublesave("../figures/beat")
+fs.doublesave("../figures/beat")
 plt.show()

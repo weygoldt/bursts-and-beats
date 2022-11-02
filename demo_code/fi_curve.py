@@ -62,13 +62,11 @@ for k in sorted_contrasts:
     else:        
         sorted_trials[c] = [int(k)]       
 
-embed()
-exit()
 
 fig, ax = plt.subplots(constrained_layout=True)
 ax.errorbar(c, r, yerr=rate_stds, fmt="-o")
 ax.set_ylabel('Firing rate [Hz]')
-ax.set_xlabel('Contrasts')
+ax.set_xlabel('Contrasts [%]')
 plt.savefig("../figures/fi_curve")
 plt.show()
 plt.close()
