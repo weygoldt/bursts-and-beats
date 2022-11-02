@@ -2,7 +2,7 @@ import numpy as np
 import rlxnix as rlx
 from IPython import embed
 
-dset = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
+dset = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 
 
 def sort_reodfs(data):

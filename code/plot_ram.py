@@ -16,6 +16,7 @@ stimulie_rlx = ram.stimuli
 # load file stimulie from folder
 ram.stimulus_folder = "../data/stimulus/"
 s, t = ram.load_stimulus()
+eodf_fisch = d.metadata['Recording']['Subject']['EOD Frequency'][0]
 
 stas = []
 sds = []
@@ -32,16 +33,19 @@ for stim in stimulie_rlx:
     sds.append(sd)
 
 mean_stas = np.array(np.mean(stas, axis=0))
-mean_sds = np.array(np.std(sds, axis=0))
+mean_sds = np.array(np.std(stas, axis=0))
+mean_stas = mean_stas*0.2*eodf_fisch
+mean_sds = mean_sds*0.2*eodf_fisch
 
 fig, ax = plt.subplots()
-ax.plot(time, mean_stas)
-ax.fill_between(time, mean_stas - mean_sds, mean_stas + mean_sds, alpha=0.3, zorder=-10)
-ax.hlines(0, -10, 10, linestyles="dashed", alpha=0.6, color="k")
-ax.vlines(0, -10, 10, linestyles="dashed", alpha=0.6, color="k")
-ax.set_xlim(-0.03, 0.03)
-ax.set_ylim(-0.2, 0.2)
+ax.plot(time*1000, mean_stas, color='k')
+ax.fill_between(time*1000, mean_stas-mean_sds, mean_stas+mean_sds, alpha=0.3, zorder=-10, color="darkgrey")
+ax.hlines(0, -25, 25, linestyles='dashed', alpha=0.6, color="k")
+ax.vlines(0, -25, 15, linestyles='dashed', alpha=0.6, color="k")
+ax.set_xlim(-24, 24)
+ax.set_ylim(-24, 15)
 ax.set_xlabel("Time [ms]")
-ax.set_ylabel("Stimulus")
+ax.set_ylabel("Stimulus [mV/cm]")
+plt.show()
 fs.doublesave("../figures/spike_triggered_average")
 plt.show()

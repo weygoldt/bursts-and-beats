@@ -6,7 +6,11 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+<<<<<<< HEAD
     <dc:date>2022-11-02T10:10:39.973865</dc:date>
+=======
+    <dc:date>2022-11-02T14:08:11.067534</dc:date>
+>>>>>>> Alex
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -28,6 +32,7 @@ L 0 0
 z
 " style="fill: #ffffff"/>
   </g>
+<<<<<<< HEAD
   <g id="axes_1">
    <g id="patch_2">
     <path d="M 66.6 435.744 
@@ -4963,4 +4968,7 @@ L 479.52 435.744
    <rect x="66.6" y="58.752" width="412.92" height="376.992"/>
   </clipPath>
  </defs>
+=======
+ </g>
+>>>>>>> Alex
 </svg>
