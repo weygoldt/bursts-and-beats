@@ -49,5 +49,5 @@ for a in ax:
 
 plt.subplots_adjust(left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0, hspace=0)
 
-fs.doublesave("../figures/beat")
+#fs.doublesave("../figures/beat")
 plt.show()
