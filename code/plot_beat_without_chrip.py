@@ -42,5 +42,5 @@ for a in ax:
 
 plt.subplots_adjust(left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0, hspace=0.8)
 
-#fs.doublesave("../figures/beat_without_chirp")
+fs.doublesave("../figures/beat_without_chirp")
 plt.show()
