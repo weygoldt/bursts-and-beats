@@ -164,11 +164,8 @@ def isis(spike_times):
         Interspike intervals
     """
 
-    isiarray = []
-    for times in spike_times:
-        difftimes = np.diff(times)
-        isiarray.append(difftimes)
-
+    isiarray = np.diff(spike_times)
+        
     return isiarray
 
 

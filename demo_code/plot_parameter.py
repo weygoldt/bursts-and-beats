@@ -23,7 +23,7 @@ mpl.rcParams['ytick.major.size'] = 5
 mpl.rcParams['ytick.major.width'] = 1
 
 # legend
-mpl.rcParams['legend.loc'] = 'center right'
+mpl.rcParams['legend.loc'] = 'upper right'
 mpl.rcParams['legend.frameon'] = True
 mpl.rcParams['legend.fontsize'] = 16
 

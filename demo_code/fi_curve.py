@@ -13,7 +13,7 @@ def filter_stimulus(stim):
 """
 
 # get data
-d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
+d = rlx.Dataset("../../data/2022-10-27-aa-invivo-1.nix")
 # fi = d.find_stimuli("FIC", filter_stimulus)
 
 #find contrast 
@@ -86,8 +86,10 @@ for i in rates:
 r = [mean_rates[key][0] for key in mean_rates]
 c = [key for key in mean_rates]
 
-fig, ax = plt.subplots(figsize=(8, 6))
+fig, ax = plt.subplots(constrained_layout=True)
 ax.errorbar(c, r, yerr=rate_stds, fmt="-o")
 ax.set_ylabel('Firing rate [Hz]')
 ax.set_xlabel('Contrasts')
+plt.savefig("../figures/fi_curve")
 plt.show()
+plt.close()
