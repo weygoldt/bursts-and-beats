@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
+from tqdm import tqdm
 
 import functions as fs
 from plotstyle import PlotStyle
@@ -59,7 +60,7 @@ for k in sorted_contrasts:
 
 rates = {}
 mean_rates = {}
-for key in sorted_trials:
+for key in tqdm(sorted_trials):
     ind = sorted_trials.get(key)
     rates[key] = []
     mean_rates[key] = []
