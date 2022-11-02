@@ -14,12 +14,19 @@ saveplot = True
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 fish_eodf = d.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
 
+reodfs = fs.sort_reodfs(d)
+
+chirp_repros = []
+for key in reodfs:
+    if int(float(key)) == 1:
+        chirp_repros.append(reodfs[key])
+
 # find all chirp repros
 chirp_repros = [i for i in d.repros if "Chirps" in i]
 
 # for chirp_repro in chirp_repros:
 
-chirp_repro = "Chirps_1"
+chirp_repro = "Chirps_6"
 # chirp_repro = "Chirps_5"
 # chirp_no = 0
 chirps = d[chirp_repro]
@@ -135,12 +142,12 @@ kdetime = np.linspace(c_time[0], c_time[-1], 500)
 rate = np.array([fs.acausal_kde1d(s, kdetime, 0.005) for s in spike_t])
 meanrate = np.mean(rate, axis=0)
 
-fig, ax = plt.subplots(2, 1, sharex=True)
-for chirp, spike in zip(centerchirp, spike_t):
-    ax[0].plot(c_time, chirp)
-    ax[0].scatter(spike, np.ones_like(spike) * -0.5, alpha=1)
-ax[1].plot(kdetime, meanrate)
-plt.show()
+# fig, ax = plt.subplots(2, 1, sharex=True)
+# for chirp, spike in zip(centerchirp, spike_t):
+#     ax[0].plot(c_time, chirp)
+#     ax[0].scatter(spike, np.ones_like(spike) * -0.5, alpha=1)
+# ax[1].plot(kdetime, meanrate)
+# plt.show()
 
 if saveplot:
     height = np.max(meanrate) * 1.2
@@ -167,12 +174,24 @@ if saveplot:
             "font.sans-serif": "Helvetica Now Text",
         }
     )
+
+    posx = 0.02
+    posy = 0.91
     ax[0].text(
-        0,
-        0,
-        r"$EODf_{{rel}} = {} Hz$".format(int(chirps.relative_eodf)),
+        posx,
+        posy,
+        r"EOD$f_{{rel}} = {}$".format(chirps.relative_eodf),
         font="stix",
         fontsize=12,
+        transform=plt.gcf().transFigure,
+    )
+    ax[0].text(
+        posx,
+        posy - 0.06,
+        r"$f_{{Beat}} = {}$ Hz".format(int(beat_f)),
+        font="stix",
+        fontsize=12,
+        transform=plt.gcf().transFigure,
     )
 
     ax[1].eventplot(
@@ -209,5 +228,5 @@ if saveplot:
 
     # adjust plot margings
     plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0.1)
-    fs.doublesave("../figures/chirp_triggered_spikes")
+    fs.doublesave("../figures/chirp_triggered_spikes_4")
     plt.show()
