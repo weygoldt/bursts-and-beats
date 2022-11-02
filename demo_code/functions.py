@@ -5,7 +5,7 @@ import numpy as np
 from IPython import embed
 from scipy import interpolate
 from scipy.signal import butter, periodogram, sosfiltfilt
-from scipy.stats import gamma
+from scipy.stats import gamma, norm
 
 from termcolors import TermColor as tc
 
@@ -139,8 +139,10 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
         peaks.append(peak)
 
     # interpolate between peaks
-    interp = interpolate.interp1d(time[peaks], beat[peaks], kind="cubic")
-    envelope = interp(time[peaks[0] : peaks[-1]])
+    interp = interpolate.interp1d(
+        time[peaks], beat[peaks], kind="cubic", fill_value="extrapolate"
+    )
+    envelope = interp(time)
     envelope_time = time[peaks[0] : peaks[-1]]
 
     return beat, envelope, envelope_time
@@ -513,6 +515,61 @@ def causal_kde1d(spikes, time, width, shape=2):
     return rate
 
 
+def acausal_kde1d(spikes, time, width):
+    """
+    causalkde computes a kernel density estimate using a causal kernel (i.e. exponential or gamma distribution).
+    A shape of 1 turns the gamma distribution into an exponential.
+
+    Parameters
+    ----------
+    spikes : array-like
+        spike times
+    time : array-like
+        sampling time
+    width : float
+        kernel width
+    shape : int, optional
+        shape of gamma distribution, by default 1
+
+    Returns
+    -------
+    rate : array-like
+        instantaneous firing rate
+    """
+
+    # compute dt
+    dt = time[1] - time[0]
+
+    # time on which to compute kernel:
+    tmax = 10 * width
+
+    # kernel not wider than time
+    if 2 * tmax > time[-1] - time[0]:
+        tmax = 0.5 * (time[-1] - time[0])
+
+    # kernel time
+    ktime = np.arange(-tmax, tmax, dt)
+
+    # gamma kernel centered in ktime:
+    kernel = norm.pdf(
+        x=ktime,
+        loc=0,
+        scale=width,
+    )
+
+    # indices of spikes in time array:
+    indices = np.asarray((spikes - time[0]) / dt, dtype=int)
+
+    # binary spike train:
+    brate = np.zeros(len(time))
+    brate[indices[(indices >= 0) & (indices < len(time))]] = 1.0
+
+    # convolution with kernel:
+    rate = np.convolve(brate, kernel, mode="same")
+
+    return rate
+
+
 # Data access and sorting
 
 
@@ -538,8 +595,8 @@ def singlecell_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.12
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -626,8 +683,8 @@ def hompopulation_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.12
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -708,8 +765,8 @@ def singlecell_bts(data):
     spike_t = []
 
     # before and after padding
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.06
 
     # go through all chirp repros
     for repro in chirp_repros:
@@ -855,8 +912,8 @@ def hompopulation_bts(data):
     spike_t = []
 
     # padding around beat
-    before_t = 0.15
-    after_t = 0.15
+    before_t = 0.06
+    after_t = 0.06
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
