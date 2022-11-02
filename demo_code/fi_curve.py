@@ -62,29 +62,8 @@ for k in sorted_contrasts:
     else:        
         sorted_trials[c] = [int(k)]       
 
-rates = {}
-mean_rates = {}
-for key in sorted_trials:
-    ind = sorted_trials.get(key)
-    rates[key] = []
-    mean_rates[key] = []
-    rate_per_contrast = []
-    for i in ind:
-        spikes, _ = fi[i].trace_data('Spikes-1')
-        rate = len(spikes) / 0.4
-        rate_per_contrast.append(rate)
-    
-    rates[key].append(rate_per_contrast)
-    mean_rates[key].append(np.mean(rate_per_contrast))
-
-rate_stds = []
-for i in rates:
-    contrast = i
-    std = np.std(rates[i][0])
-    rate_stds.append(std)
-
-r = [mean_rates[key][0] for key in mean_rates]
-c = [key for key in mean_rates]
+embed()
+exit()
 
 fig, ax = plt.subplots(constrained_layout=True)
 ax.errorbar(c, r, yerr=rate_stds, fmt="-o")
