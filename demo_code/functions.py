@@ -6,11 +6,11 @@ from IPython import embed
 from scipy import interpolate
 from scipy.signal import butter, periodogram, sosfiltfilt
 from scipy.stats import gamma, norm
-
+from plotstyle import PlotStyle
 from termcolors import TermColor as tc
 
 # Data simulation
-
+ps = PlotStyle()
 
 def create_chirp(
     eodf=500,
@@ -217,7 +217,7 @@ def plot_isih(ax, isis, binwidth):
     # basic statistics
     sdisi = np.std(isis)
     cv = sdisi / misi
-    ax.bar(centers * 1000, pdf, width=binwidth * 1000)  # plot histogram with ISIs in ms
+    ax.bar(centers * 1000, pdf, width=binwidth * 1000, color=ps.darkblue)  # plot histogram with ISIs in ms
 
     ax.set_xlabel("Interspike interval [ms]")
     ax.set_ylabel("p(ISI) [1/s]")

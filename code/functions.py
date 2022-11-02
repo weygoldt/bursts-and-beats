@@ -8,6 +8,9 @@ from scipy.signal import butter, periodogram, sosfiltfilt
 from scipy.stats import gamma, norm
 
 from termcolors import TermColor as tc
+from plotstyle import PlotStyle
+
+ps = PlotStyle()
 
 # Data simulation
 
@@ -198,7 +201,7 @@ def isih(isis, bin_width):
     return pdf, centers
 
 
-def plot_isih(ax, isis, binwidth):
+def plot_isih(ax, isis, binwidth, color=color):
     """
     Plot the interspike interval histogram.
 
@@ -219,7 +222,7 @@ def plot_isih(ax, isis, binwidth):
     # basic statistics
     sdisi = np.std(isis)
     cv = sdisi / misi
-    ax.bar(centers * 1000, pdf, width=binwidth * 1000)  # plot histogram with ISIs in ms
+    ax.bar(centers * 1000, pdf, width=binwidth * 1000, facecolor=color)  # plot histogram with ISIs in ms
 
     ax.set_xlabel("Interspike interval [ms]")
     ax.set_ylabel("p(ISI) [1/s]")
@@ -389,10 +392,12 @@ def plot_baseline(ax, data, start=0.0, end=1.0):
     bl = data.repro_runs("BaselineActivity")
     v, t = bl[0].membrane_voltage()
     spikes = bl[0].spikes()
-    ax.plot(t, v)
+    ax.plot(t, v, color=ps.darkblue)
     ax.set_xlabel("Time [s]")
     ax.set_ylabel("Membrane voltage [mV]")
-    ax.scatter(spikes, np.ones_like(spikes) * np.max(v) + 1)
+    ax.scatter(spikes, np.ones_like(spikes) * np.max(v) + 2, color=ps.darkblue)
+    ax.spines["right"].set_visible(False)
+    ax.spines["top"].set_visible(False)
     ax.set_xlim(start, end)
 
 
