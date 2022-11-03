@@ -44,7 +44,7 @@ def singlespike_triggered_stim(ram):
         single_t = [spikes[x] for x in single_spikes]
         dt = t[1] - t[0]
         time, sta, sd, count = fs.spike_triggered_average(
-            single_t, s, dt, t_min=-0.025, t_max=0.025
+            single_t, s, dt, t_min=-0.040, t_max=0.015
         )
 
         # collect data
@@ -98,7 +98,7 @@ def burst_triggered_stim(ram):
 
         dt = t[1] - t[0]
         time, sta, sd, count = fs.spike_triggered_average(
-            burst_t, s, dt, t_min=-0.025, t_max=0.025
+            burst_t, s, dt, t_min=-0.040, t_max=0.015
         )
         stas.append(sta)
         spike_times.append(spikes)
@@ -150,6 +150,11 @@ ax[1].fill_between(
 ax[1].plot(s_time * 1000, s_mean - s_std, c="darkgray", lw=1)
 ax[1].plot(s_time * 1000, s_mean + s_std, c="darkgray", lw=1)
 
+ax[0].plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax[0].plot([0, 0], [-40, 30], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax[1].plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax[1].plot([0, 0], [-40, 30], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+
 for a in ax:
 
     # add guidelines
@@ -160,11 +165,11 @@ for a in ax:
     a.spines["right"].set_visible(False)
     a.spines["top"].set_visible(False)
 
-    ## make axes nicer
-    #a.set_xticks(np.append(np.arange(0, 25, 10) - 20, np.arange(0, 30, 10)))
-    #a.set_yticks(np.arange(-40, 35, 10))
-    #a.spines.left.set_bounds((-40, 30))
-    #a.spines.bottom.set_bounds((-25, 25))
+    # make axes nicer
+    a.set_xticks(np.append(np.arange(0, 40, 10) - 40, np.arange(0, 15, 10)))
+    a.set_yticks(np.arange(-40, 35, 10))
+    a.spines.left.set_bounds((-40, 30))
+    a.spines.bottom.set_bounds((-40, 15))
 
 fig.supxlabel("Spike centered time [ms]", fontsize=14, x=0.552, y=0.009)
 fig.supylabel("Average stimulus [mV/cm]", fontsize=14, x=0.02, y=0.6)

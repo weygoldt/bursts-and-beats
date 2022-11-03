@@ -17,8 +17,8 @@ fish_eodf = d.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
 reodfs = fs.sort_reodfs(d)
 
 # get all chirp repros with multiple of 1
-chirp_repros = [reodfs[key][0] for key in reodfs if int(float(key)) == 1]
-chirp_repro = chirp_repros[1]
+chirp_repros = [x for x in d.repros if "Chirp" in x]
+chirp_repro = chirp_repros[3]
 chirps = d[chirp_repro]
 
 # collect data here
@@ -210,7 +210,7 @@ if saveplot:
         lw=0,
     )
 
-    ax[2].plot(kdetime * 1000, meanrate, color="darkgray", lw=1)
+    ax[2].plot(kdetime * 1000, meanrate, color="darkgray", lw=1.5)
 
     # remove upper and right axis
     ax[2].spines["right"].set_visible(False)
