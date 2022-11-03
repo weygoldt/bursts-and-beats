@@ -36,15 +36,15 @@ for stim in stimulie_rlx:
     spike_times.append(spikes)
     sds.append(sd)
 
-ampl = ram[0].feature_data('gwn300Hz50s0-1_amplitude')
+ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")
 stim_contrast = 0.2
-sdt_stim = stim_contrast * ampl 
+sdt_stim = stim_contrast * ampl
 ist_std_stim = 0.3
-contrast =  ist_std_stim * (sdt_stim/ist_std_stim)
+contrast = ist_std_stim * (sdt_stim / ist_std_stim)
 mean_stas = np.array(np.mean(stas, axis=0))
 mean_sds = np.array(np.std(stas, axis=0))
 mean_stas = mean_stas * contrast
-mean_sds = mean_sds   * contrast
+mean_sds = mean_sds * contrast
 
 fig, ax = plt.subplots(figsize=(16 * ps.cm, 12 * ps.cm))
 ax.plot(time * 1000, mean_stas, color=ps.black, lw=2)
@@ -61,7 +61,7 @@ ax.plot(time * 1000, mean_stas - mean_sds, color="darkgray", lw=1)
 ax.plot(time * 1000, mean_stas + mean_sds, color="darkgray", lw=1)
 
 ax.plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
-ax.plot([0, 0], [-25, 10], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax.plot([0, 0], [-0.015, 0.005], ls="dashed", color=ps.black, lw=1, alpha=0.4)
 ax.set_xlim(-42, 17)
 
 ax.set_xlabel("Time [ms]")
@@ -73,11 +73,11 @@ ax.spines["top"].set_visible(False)
 
 # make axes nicer
 ax.set_xticks(np.arange(-40, 20, 5))
-ax.set_yticks(np.arange(-25, 15, 5))
-ax.spines.left.set_bounds((-25, 10))
+ax.set_yticks(np.arange(-0.015, 0.006, 0.005))
+ax.spines.left.set_bounds((-0.015, 0.005))
 ax.spines.bottom.set_bounds((-40, 15))
 
-plt.subplots_adjust(left=0.12, right=0.98, top=0.99, bottom=0.12, hspace=0)
+plt.subplots_adjust(left=0.15, right=0.98, top=0.99, bottom=0.12, hspace=0)
 
 fs.doublesave("../figures/spike_triggered_average")
 plt.show()
