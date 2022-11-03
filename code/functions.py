@@ -7,8 +7,9 @@ from scipy import interpolate
 from scipy.signal import butter, periodogram, sosfiltfilt
 from scipy.stats import gamma, norm
 
-from termcolors import TermColor as tc
 from plotstyle import PlotStyle
+from termcolors import TermColor as tc
+
 ps = PlotStyle()
 # Data simulation
 
@@ -370,7 +371,6 @@ def burst_detector(spike_times, isi_thresh, verbose=True):
     return single_spikes, burst_spikes, burst_start_stop
 
 
-
 def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
     """Ploting the first recorded Baseline Activity
 
@@ -390,37 +390,46 @@ def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
     bl = data.repro_runs("BaselineActivity")
     v, t = bl[0].membrane_voltage()
     spikes = bl[0].spikes()
-    spikes_window= np.where((start < spikes) & (spikes < end))[0]
+    spikes_window = np.where((start < spikes) & (spikes < end))[0]
     if start == 0.0:
         start == 1e-10
-        rate = len(spikes_window)/(end-start)
-    ax.plot(t,v, c=ps.darkblue)
-    ax.set_xlabel('Time [s]')
-    ax.set_ylabel('Membrane voltage [mV]')
-    ax.scatter(spikes, np.ones_like(spikes)*np.max(v)+ 3, label=f"n Spikes: {len(spikes_window)}")
+        rate = len(spikes_window) / (end - start)
+    ax.plot(t, v, c=ps.darkblue)
+    ax.set_xlabel("Time [s]")
+    ax.set_ylabel("Membrane voltage [mV]")
+    ax.scatter(
+        spikes,
+        np.ones_like(spikes) * np.max(v) + 3,
+        label=f"n Spikes: {len(spikes_window)}",
+    )
     ax.set_xlim(start, end)
-    ax.text(0.05, 1.01, f"Spike Rate: {rate} Hz", transform=ax.transAxes )
-    single_spikes, burst_spikes, burst_start_stop = burst_detector(spikes, 0.01, verbose=False)
-    if burst==True:
-        burst_spikes_fenster = np.where((start < spikes[flatten(burst_spikes)]) &
-        (spikes[flatten(burst_spikes)] < end))[0]
-        ax.scatter(spikes[flatten(burst_spikes)],
-                    np.ones_like(spikes[flatten(burst_spikes)])*np.max(v)+ 9,
-                    label=f"n Bursts: {len(burst_spikes_fenster)}",
-                    c="k" )
-    if single==True:
-        single_spikes_fenster = np.where((start < spikes[single_spikes]) &
-        (spikes[single_spikes] < end))[0]
-        ax.scatter(spikes[single_spikes], 
-                    np.ones_like(spikes[single_spikes])*np.max(v) + 6, 
-                    label=f"n Single: {len(single_spikes_fenster)}", 
-                    c="blue")
-    
-    ax.legend(loc='upper left', bbox_to_anchor=(0.5, 1.1),ncol=2 , markerscale=1.5)
-    
-    
+    ax.text(0.05, 1.01, f"Spike Rate: {rate} Hz", transform=ax.transAxes)
+    single_spikes, burst_spikes, burst_start_stop = burst_detector(
+        spikes, 0.01, verbose=False
+    )
+    if burst == True:
+        burst_spikes_fenster = np.where(
+            (start < spikes[flatten(burst_spikes)])
+            & (spikes[flatten(burst_spikes)] < end)
+        )[0]
+        ax.scatter(
+            spikes[flatten(burst_spikes)],
+            np.ones_like(spikes[flatten(burst_spikes)]) * np.max(v) + 9,
+            label=f"n Bursts: {len(burst_spikes_fenster)}",
+            c="k",
+        )
+    if single == True:
+        single_spikes_fenster = np.where(
+            (start < spikes[single_spikes]) & (spikes[single_spikes] < end)
+        )[0]
+        ax.scatter(
+            spikes[single_spikes],
+            np.ones_like(spikes[single_spikes]) * np.max(v) + 6,
+            label=f"n Single: {len(single_spikes_fenster)}",
+            c="blue",
+        )
 
-
+    ax.legend(loc="upper left", bbox_to_anchor=(0.5, 1.1), ncol=2, markerscale=1.5)
 
 
 def spike_triggered_average(spikes, stimulus, dt, t_min=-0.1, t_max=0.1):
@@ -463,6 +472,33 @@ def spike_triggered_average(spikes, stimulus, dt, t_min=-0.1, t_max=0.1):
     sta = np.mean(snippets[:, :count], axis=1)  # average and
     sd = np.std(snippets[:, :count], axis=1)  # standard deviation over all snippets
     return time, sta, sd, count
+
+
+def reconstruct_stimulus(spikes, sta, duration, dt):
+
+    """Estimate the stimulus from the spike-triggered-average (STA).
+    Parameters
+    ----------
+    spikes: ndarray of floats
+    Spike times of a single trial.
+    sta: ndarray of floats
+    Spike-triggered-average
+    duration: float
+    Duration of the stimulus.
+    dt: float
+    Temporal resolution of STA.
+    Returns
+    -------
+    estimated_stimulus: ndarray of floats
+    Estimated stimulus waveform.
+    """
+
+    estimated_stimulus = np.arange(0.0, duration, dt)
+    binary_spikes = np.zeros(len(estimated_stimulus))
+    binary_spikes[np.array(np.round(spikes / dt), dtype=int)] = 1.0
+    estimated_stimulus = np.convolve(binary_spikes, sta, "same")
+
+    return estimated_stimulus
 
 
 # Filters
