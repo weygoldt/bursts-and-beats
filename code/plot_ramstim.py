@@ -9,7 +9,7 @@ from plotstyle import PlotStyle
 ps = PlotStyle()
 
 # get data
-d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
+d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 
 
 ram = d["FileStimulus_3"]
@@ -65,9 +65,9 @@ plt.plot(localeodx, envelope * -1, color = ps.darkblue)
 ax.spines["right"].set_visible(False)
 ax.spines["top"].set_visible(False)
 
-plt.xlim((0.5, 1.5))
+plt.xlim((0.7, 1.5))
 ax.set_xlabel('Time [s]')
 ax.set_ylabel('Stimulus envelope')
-fs.doublesave("figures/ramstim")
+fs.doublesave("../figures/ramstim")
 plt.show()
 
