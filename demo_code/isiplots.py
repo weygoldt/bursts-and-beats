@@ -8,7 +8,7 @@ import functions as fs
 
 ps = PlotStyle()
 
-d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
+d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
 
 ### plot isis
 bl1 = d['BaselineActivity_4']
