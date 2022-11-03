@@ -5,16 +5,16 @@ import functions as fs
 from plotstyle import PlotStyle
 
 s = PlotStyle()
-eodf_send = 300
+eodf_send = 300 
 # make chirping individual (sender)
 time, eod_send, _, _ = fs.create_chirp(eodf= eodf_send,
     ampl_reduction=0.2, chirpsize=200, chirptimes=[0.1, 0.185]
 )
-
+eod_send *= 0.2
 # make receiver
 
 eodf_rec = 300  + 100
-eod_rec = 0.2 * np.sin(2 * np.pi * eodf_rec * time)
+eod_rec = np.sin(2 * np.pi * eodf_rec * time)
 
 # make envelope
 beat, envelope, envelope_time = fs.beat_envelope(eod_send, eod_rec, eodf_send, eodf_rec, time)
@@ -51,5 +51,5 @@ for a in ax:
 
 plt.subplots_adjust(left=0.01, bottom=0.01, right=0.99, top=0.9, wspace=0.196, hspace=0.196)
 
-fs.doublesave("../figures/beat")
+#fs.doublesave("../figures/beat")
 plt.show()
