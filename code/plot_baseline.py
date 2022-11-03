@@ -15,7 +15,7 @@ ps = PlotStyle()
 
 # plot 15 seconds of Baseline activity 
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
-figsize_x= 20 * ps.cm
+figsize_x= 24 * ps.cm
 figsize_y = 12 * ps.cm
 
 fig, ax = plt.subplots(figsize=(figsize_x, figsize_y))
