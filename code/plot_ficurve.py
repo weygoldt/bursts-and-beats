@@ -11,6 +11,8 @@ ps = PlotStyle()
 
 # get data
 d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
+embed()
+exit()
 
 # find contrast
 fi = d["FICurve_1"]
