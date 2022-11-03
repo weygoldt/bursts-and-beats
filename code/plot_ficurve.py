@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
+from IPython import embedfrom tqdm import tqdm
 
 import functions as fs
 from plotstyle import PlotStyle
@@ -13,6 +14,7 @@ d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 # find contrast
 fi = d["FICurve_1"]
 fi_counts = fi.stimulus_count
+
 contrasts = {}
 
 for count in range(fi_counts):
@@ -59,7 +61,7 @@ for k in sorted_contrasts:
 
 rates = {}
 mean_rates = {}
-for key in sorted_trials:
+for key in tqdm(sorted_trials):
     ind = sorted_trials.get(key)
     rates[key] = []
     mean_rates[key] = []
