@@ -41,7 +41,7 @@ ax2.set_ylim(-2.1, 2.1)
 
 ax1.text( 0.0, 1.1, f"Sender: {eodf_send} Hz",transform=ax1.transAxes )
 ax2.text( 0.0, 0.99, f"Receiver: {eodf_rec} Hz", transform=ax2.transAxes)
-ax2.text(0.0, 1.0, f"Amplitude modulation: {eodf_rec-eodf_send} Hz", transform=ax3.transAxes)
+ax2.text(0.0, 1.0, f"Beat Envelope: {eodf_rec-eodf_send} Hz", transform=ax3.transAxes)
 
 # remove axes
 
