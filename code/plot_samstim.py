@@ -1,24 +1,23 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
-from IPython import embed
 from scipy import interpolate
+from IPython import embed
+
 import functions as fs
 from plotstyle import PlotStyle
 
 ps = PlotStyle()
 
 # get data
-d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
+data = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
 
-# find contrast
-fi = d["FICurve_1"]
+sam = data['SAM_4']
+eodf = sam.trace_data('EOD')[0]
+eodx = sam.trace_data('EOD')[1]
 
-eodf = fi.trace_data('EOD')[0]
-eodx = fi.trace_data('EOD')[1]
-
-localeodf = fi.trace_data('LocalEOD-1')[0]
-localeodx = fi.trace_data('LocalEOD-1')[1]
+localeodf = sam.trace_data('LocalEOD-1')[0]
+localeodx = sam.trace_data('LocalEOD-1')[1]
 beat = localeodf
 # compute envelope
 
@@ -65,9 +64,11 @@ plt.plot(localeodx, envelope * -1, color = ps.darkblue)
 ax.spines["right"].set_visible(False)
 ax.spines["top"].set_visible(False)
 
-plt.xlim((0, 16))
+plt.xlim((0.2, 0.8))
 ax.set_xlabel('Time [s]')
 ax.set_ylabel('Stimulus envelope')
-fs.doublesave("figures/fistim")
+fs.doublesave("figures/samstim")
 plt.show()
+
+
 
