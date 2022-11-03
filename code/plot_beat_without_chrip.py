@@ -13,7 +13,7 @@ time, eod_send, _, _ = fs.create_chirp()
 eodf_rec = 500
 eodf_send = 480
 eod_rec = 1 * np.sin(2 * np.pi * eodf_rec * time)
-eod_send = 1 * np.sin(2 * np.pi * eodf_send * time)
+eod_send = 0.5 * np.sin(2 * np.pi * eodf_send * time)
 # make envelope
 beat, envelope, envelope_time = fs.beat_envelope(eod_send, eod_rec, 500, eodf_rec, time)
 
