@@ -22,6 +22,14 @@ def singlespike_triggered_stim(ram):
     stimuli_rlx = ram.stimuli
     ram.stimulus_folder = "../data/stimulus/"
     s, t = ram.load_stimulus()
+
+    # convert s to actual unit
+    ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")
+    stim_contrast = 0.2
+    sdt_stim = stim_contrast * ampl
+    ist_std_stim = 0.3
+    s = s * (sdt_stim / ist_std_stim)
+
     eodf_fisch = d.metadata["Recording"]["Subject"]["EOD Frequency"][0]
 
     # collect data here
@@ -57,15 +65,8 @@ def singlespike_triggered_stim(ram):
     mean_sds = np.array(np.std(stas, axis=0))
 
     # normalize
-    ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")
-    stim_contrast = 0.2
-    sdt_stim = stim_contrast * ampl
-    ist_std_stim = 0.3
-    contrast = ist_std_stim * (sdt_stim / ist_std_stim)
     mean_stas = np.array(np.mean(stas, axis=0))
     mean_sds = np.array(np.std(stas, axis=0))
-    mean_stas = mean_stas * contrast
-    mean_sds = mean_sds * contrast
 
     return time, mean_stas, mean_sds
 
@@ -76,6 +77,14 @@ def burst_triggered_stim(ram):
     stimuli_rlx = ram.stimuli
     ram.stimulus_folder = "../data/stimulus/"
     s, t = ram.load_stimulus()
+
+    # convert s to actual unit
+    ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")
+    stim_contrast = 0.2
+    sdt_stim = stim_contrast * ampl
+    ist_std_stim = 0.3
+    s = s * (sdt_stim / ist_std_stim)
+
     eodf_fisch = d.metadata["Recording"]["Subject"]["EOD Frequency"][0]
 
     # collect data here
@@ -103,15 +112,8 @@ def burst_triggered_stim(ram):
         spike_times.append(spikes)
         sds.append(sd)
 
-    ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")
-    stim_contrast = 0.2
-    sdt_stim = stim_contrast * ampl
-    ist_std_stim = 0.3
-    contrast = ist_std_stim * (sdt_stim / ist_std_stim)
     mean_stas = np.array(np.mean(stas, axis=0))
     mean_sds = np.array(np.std(stas, axis=0))
-    mean_stas = mean_stas * contrast
-    mean_sds = mean_sds * contrast
 
     return time, mean_stas, mean_sds
 
@@ -124,35 +126,35 @@ b_time, b_mean, b_std = burst_triggered_stim(ram)
 fig, ax = plt.subplots(1, 2, figsize=(24 * ps.cm, 12 * ps.cm), sharey=True, sharex=True)
 
 # plot burst triggered stimulus
-ax[0].plot(b_time * 1000, b_mean, c=ps.black, lw=2)
-ax[0].fill_between(
+ax[1].plot(b_time * 1000, b_mean, c=ps.gblue3, lw=2)
+ax[1].fill_between(
     b_time * 1000,
     b_mean - b_std,
     b_mean + b_std,
-    color="lightgray",
+    color=ps.gblue3,
     alpha=0.3,
     lw=0,
 )
-ax[0].plot(b_time * 1000, b_mean - b_std, c="darkgray", lw=1)
-ax[0].plot(b_time * 1000, b_mean + b_std, c="darkgray", lw=1)
+ax[1].plot(b_time * 1000, b_mean - b_std, c=ps.gblue3, lw=1)
+ax[1].plot(b_time * 1000, b_mean + b_std, c=ps.gblue3, lw=1)
 
 # plot singlespike triggered average stimulus
-ax[1].plot(s_time * 1000, s_mean, c=ps.black, lw=2)
-ax[1].fill_between(
+ax[0].plot(s_time * 1000, s_mean, c=ps.gblue2, lw=2)
+ax[0].fill_between(
     s_time * 1000,
     s_mean - s_std,
     s_mean + s_std,
-    color="lightgray",
+    color=ps.gblue2,
     alpha=0.3,
     lw=0,
 )
-ax[1].plot(s_time * 1000, s_mean - s_std, c="darkgray", lw=1)
-ax[1].plot(s_time * 1000, s_mean + s_std, c="darkgray", lw=1)
+ax[0].plot(s_time * 1000, s_mean - s_std, c=ps.gblue2, lw=1)
+ax[0].plot(s_time * 1000, s_mean + s_std, c=ps.gblue2, lw=1)
 
-ax[0].plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
-ax[0].plot([0, 0], [-0.025, 0.015], ls="dashed", color=ps.black, lw=1, alpha=0.4)
 ax[1].plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
-ax[1].plot([0, 0], [-0.025, 0.015], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax[1].plot([0, 0], [-0.08, 0.06], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax[0].plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax[0].plot([0, 0], [-0.08, 0.06], ls="dashed", color=ps.black, lw=1, alpha=0.4)
 
 for a in ax:
 
@@ -166,8 +168,8 @@ for a in ax:
 
     # make axes nicer
     a.set_xticks(np.append(np.arange(0, 40, 10) - 40, np.arange(0, 16, 10)))
-    a.set_yticks(np.arange(-0.025, 0.016, 0.010))
-    a.spines.left.set_bounds((-0.025, 0.015))
+    a.set_yticks(np.arange(-0.08, 0.06, 0.02))
+    a.spines.left.set_bounds((-0.08, 0.06))
     a.spines.bottom.set_bounds((-40, 15))
 
 fig.supxlabel("Spike centered time [ms]", fontsize=14, x=0.552, y=0.009)
