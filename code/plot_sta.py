@@ -30,7 +30,7 @@ for stim in stimulie_rlx:
     spikes = stim.trace_data("Spikes-1")[0]
     dt = t[1] - t[0]
     time, sta, sd, count = fs.spike_triggered_average(
-        spikes, s, dt, t_min=-0.025, t_max=0.025
+        spikes, s, dt, t_min=-0.04, t_max=0.015
     )
     stas.append(sta)
     spike_times.append(spikes)
@@ -55,9 +55,9 @@ ax.fill_between(
 ax.plot(time * 1000, mean_stas - mean_sds, color="darkgray", lw=1)
 ax.plot(time * 1000, mean_stas + mean_sds, color="darkgray", lw=1)
 
-ax.plot([-25, 25], [0, 0], ls="dashed", color=ps.black, lw=1)
-ax.plot([0, 0], [-25, 10], ls="dashed", color=ps.black, lw=1)
-ax.set_xlim(-28, 26)
+ax.plot([-40, 15], [0, 0], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax.plot([0, 0], [-25, 10], ls="dashed", color=ps.black, lw=1, alpha=0.4)
+ax.set_xlim(-42, 17)
 
 ax.set_xlabel("Time [ms]")
 ax.set_ylabel("Average stimulus")
@@ -67,10 +67,10 @@ ax.spines["right"].set_visible(False)
 ax.spines["top"].set_visible(False)
 
 # make axes nicer
-ax.set_xticks(np.arange(-25, 30, 5))
+ax.set_xticks(np.arange(-40, 20, 5))
 ax.set_yticks(np.arange(-25, 15, 5))
 ax.spines.left.set_bounds((-25, 10))
-ax.spines.bottom.set_bounds((-25, 25))
+ax.spines.bottom.set_bounds((-40, 15))
 
 plt.subplots_adjust(left=0.12, right=0.98, top=0.99, bottom=0.12, hspace=0)
 
