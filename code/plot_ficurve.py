@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
-
+from IPython import embed
 import functions as fs
 from plotstyle import PlotStyle
 
@@ -13,6 +13,7 @@ d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 # find contrast
 fi = d["FICurve_1"]
 fi_counts = fi.stimulus_count
+
 contrasts = {}
 
 for count in range(fi_counts):
