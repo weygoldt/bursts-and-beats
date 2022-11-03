@@ -50,16 +50,17 @@ ax.fill_between(
     alpha=0.3,
     zorder=-10,
     color="lightgray",
-    lw=1,
-    ec="darkgray",
+    lw=0,
 )
+ax.plot(time * 1000, mean_stas - mean_sds, color="darkgray", lw=1)
+ax.plot(time * 1000, mean_stas + mean_sds, color="darkgray", lw=1)
 
-ax.hlines(0, -25, 25, linestyles="dashed", color="k", lw=1)
-ax.vlines(0, -25, 10, linestyles="dashed", color="k", lw=1)
+ax.plot([-25, 25], [0, 0], ls="dashed", color=ps.black, lw=1)
+ax.plot([0, 0], [-25, 10], ls="dashed", color=ps.black, lw=1)
 ax.set_xlim(-28, 26)
 
 ax.set_xlabel("Time [ms]")
-ax.set_ylabel("Stimulus [mV/cm]")
+ax.set_ylabel("Average stimulus")
 
 # remove upper and right axis
 ax.spines["right"].set_visible(False)
@@ -71,7 +72,7 @@ ax.set_yticks(np.arange(-25, 15, 5))
 ax.spines.left.set_bounds((-25, 10))
 ax.spines.bottom.set_bounds((-25, 25))
 
-plt.subplots_adjust(left=0.12, right=0.98, top=0.97, bottom=0.12, hspace=0)
+plt.subplots_adjust(left=0.12, right=0.98, top=0.99, bottom=0.12, hspace=0)
 
 fs.doublesave("../figures/spike_triggered_average")
 plt.show()

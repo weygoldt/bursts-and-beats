@@ -17,19 +17,8 @@ fish_eodf = d.metadata["Recording"]["Subject"]["EOD Frequency"][0][0]
 reodfs = fs.sort_reodfs(d)
 
 # get all chirp repros with multiple of 1
-chirp_repros = []
-for key in reodfs:
-    if int(float(key)) == 1:
-        chirp_repros.append(reodfs[key][0])
-
-# find all chirp repros
-# chirp_repros = [i for i in d.repros if "Chirps" in i]
-
-# for chirp_repro in chirp_repros:
-
+chirp_repros = [reodfs[key][0] for key in reodfs if int(float(key)) == 1]
 chirp_repro = chirp_repros[0]
-# chirp_repro = "Chirps_5"
-# chirp_no = 0
 chirps = d[chirp_repro]
 
 # collect data here
@@ -213,8 +202,15 @@ if saveplot:
     ax[1].spines.left.set_bounds((0, 100))
 
     ax[2].fill_between(
-        kdetime * 1000, np.zeros_like(meanrate), meanrate, color="darkgrey"
+        kdetime * 1000,
+        np.zeros_like(meanrate),
+        meanrate,
+        color="lightgrey",
+        alpha=0.3,
+        lw=0,
     )
+
+    ax[2].plot(kdetime * 1000, meanrate, color="darkgray", lw=1)
 
     # remove upper and right axis
     ax[2].spines["right"].set_visible(False)
@@ -232,7 +228,10 @@ if saveplot:
     # adjust label position
     # ax[1].xaxis.set_label_coords(0.5, -0.2)
 
+    fig.align_ylabels(ax)
+
     # adjust plot margings
     plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0.1)
+
     fs.doublesave(f"../figures/chirp_triggered_spikes_{chirps.relative_eodf}")
     plt.show()
