@@ -7,8 +7,10 @@ from scipy import interpolate
 from scipy.signal import butter, periodogram, sosfiltfilt
 from scipy.stats import gamma, norm
 
+from plotstyle import PlotStyle
 from termcolors import TermColor as tc
 
+ps = PlotStyle()
 # Data simulation
 
 
@@ -107,12 +109,7 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     beat = sender_eod + receiver_eod
 
     # determine which is higher
-    if sender_eodf > receiver_eodf:
-        lower_eod = receiver_eod
-    elif sender_eodf < receiver_eodf:
-        lower_eod = sender_eod
-    else:
-        print("Error: Sender and receiver EODf are the same!")
+    lower_eod = receiver_eod if receiver_eodf < sender_eodf else sender_eod
 
     # rectification
     lower_eod_rect = lower_eod.clip(min=0)
@@ -125,6 +122,8 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
     diffs = np.diff(zero_idx)
     diffs = np.append(diffs, 0)
     zerocrossings = zero_idx[diffs > 1]
+
+    # embed()
 
     # calculate boundaries
     bounds = [[x, y] for x, y in zip(zerocrossings, zerocrossings[1:])]
@@ -139,16 +138,15 @@ def beat_envelope(sender_eod, receiver_eod, sender_eodf, receiver_eodf, time):
         peaks.append(peak)
 
     # interpolate between peaks
-    interp = interpolate.interp1d(
-        time[peaks], beat[peaks], kind="cubic", fill_value="extrapolate"
-    )
-    envelope = interp(time)
+    interp = interpolate.interp1d(time[peaks], beat[peaks], kind="cubic")
+    envelope = interp(time[peaks[0] : peaks[-1]])
     envelope_time = time[peaks[0] : peaks[-1]]
 
     return beat, envelope, envelope_time
 
 
 # Interspike interval functions
+# Baseline analysis
 
 
 def isis(spike_times):
@@ -375,6 +373,136 @@ def burst_detector(spike_times, isi_thresh, verbose=True):
     return single_spikes, burst_spikes, burst_start_stop
 
 
+def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
+    """Ploting the first recorded Baseline Activity
+
+    Parameters
+    ----------
+    ax : matplotlib axis
+    data : rlx.Dataset
+    start : float, optional
+        start of the Baseline by default 0.0
+    end : float, optional
+        end of the Baseline, by default 1.0
+    burst : bool, optional
+        _description_, by default False
+    single : bool, optional
+        _description_, by default False
+    """
+    bl = data.repro_runs("BaselineActivity")
+    v, t = bl[0].membrane_voltage()
+    spikes = bl[0].spikes()
+    spikes_window = np.where((start < spikes) & (spikes < end))[0]
+    if start == 0.0:
+        start == 1e-10
+        rate = len(spikes_window) / (end - start)
+    ax.plot(t, v, c=ps.darkblue)
+    ax.set_xlabel("Time [s]")
+    ax.set_ylabel("Membrane voltage [mV]")
+    ax.scatter(
+        spikes,
+        np.ones_like(spikes) * np.max(v) + 3,
+        label=f"n Spikes: {len(spikes_window)}",
+    )
+    ax.set_xlim(start, end)
+    ax.text(0.05, 1.01, f"Spike Rate: {rate} Hz", transform=ax.transAxes)
+    single_spikes, burst_spikes, burst_start_stop = burst_detector(
+        spikes, 0.01, verbose=False
+    )
+    if burst == True:
+        burst_spikes_fenster = np.where(
+            (start < spikes[flatten(burst_spikes)])
+            & (spikes[flatten(burst_spikes)] < end)
+        )[0]
+        ax.scatter(
+            spikes[flatten(burst_spikes)],
+            np.ones_like(spikes[flatten(burst_spikes)]) * np.max(v) + 9,
+            label=f"n Bursts: {len(burst_spikes_fenster)}",
+            c="k",
+        )
+    if single == True:
+        single_spikes_fenster = np.where(
+            (start < spikes[single_spikes]) & (spikes[single_spikes] < end)
+        )[0]
+        ax.scatter(
+            spikes[single_spikes],
+            np.ones_like(spikes[single_spikes]) * np.max(v) + 6,
+            label=f"n Single: {len(single_spikes_fenster)}",
+            c="blue",
+        )
+
+    ax.legend(loc="upper left", bbox_to_anchor=(0.5, 1.1), ncol=2, markerscale=1.5)
+
+
+def spike_triggered_average(spikes, stimulus, dt, t_min=-0.1, t_max=0.1):
+    """Estimate the spike-triggered-average (STA) stimulus.
+    Parameters
+    ----------
+    spikes: ndarray of floats
+    Spike times of a single trial. stimulus: ndarray of floats
+    The stimulus.
+    dt: float
+    Temporal resolution of the stimulus.
+    t_min: float
+    The time before the spike that should be taken into account.
+    Same unit as `dt`.
+    t_max: float
+    The time after the spike that should be taken into account. Same unit as `dt`.
+    Returns
+    -------
+    time: ndarray of floats
+    Time axis of the STA. sta: ndarray of floats
+    Spike-triggered-average. sd: ndarray of floats
+    Corresponding standard deviation. count: int
+    Number of spikes used to computed the STA."""
+    count = 0
+    time = np.arange(t_min, t_max, dt)  # time for the STA
+    snippets = np.zeros((len(time), len(spikes)))
+    for t in spikes:  # for each spike
+        min_index = int(
+            np.round((t + t_min) / dt)
+        )  # start index of snippet # end index of snippet
+        max_index = min_index + len(
+            time
+        )  # snippet not fully contained in stimulus, skip it:
+        if (min_index < 0) or (max_index > len(stimulus)):
+            continue
+
+        snippets[:, count] = stimulus[min_index:max_index]  # store snippet
+        count += 1
+
+    sta = np.mean(snippets[:, :count], axis=1)  # average and
+    sd = np.std(snippets[:, :count], axis=1)  # standard deviation over all snippets
+    return time, sta, sd, count
+
+
+def reconstruct_stimulus(spikes, sta, duration, dt):
+
+    """Estimate the stimulus from the spike-triggered-average (STA).
+    Parameters
+    ----------
+    spikes: ndarray of floats
+    Spike times of a single trial.
+    sta: ndarray of floats
+    Spike-triggered-average
+    duration: float
+    Duration of the stimulus.
+    dt: float
+    Temporal resolution of STA.
+    Returns
+    -------
+    estimated_stimulus: ndarray of floats
+    Estimated stimulus waveform.
+    """
+
+    estimated_stimulus = np.arange(0.0, duration, dt)
+    binary_spikes = np.zeros(len(estimated_stimulus))
+    binary_spikes[np.array(np.round(spikes / dt), dtype=int)] = 1.0
+    estimated_stimulus = np.convolve(binary_spikes, sta, "same")
+
+    return estimated_stimulus
+
+
 # Filters
 
 
@@ -598,8 +726,8 @@ def singlecell_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.06
-    after_t = 0.12
+    before_t = 0.15
+    after_t = 0.15
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -686,8 +814,8 @@ def hompopulation_cts(data):
     spike_t = []
 
     # padding around chirp
-    before_t = 0.06
-    after_t = 0.12
+    before_t = 0.15
+    after_t = 0.15
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]
@@ -768,8 +896,8 @@ def singlecell_bts(data):
     spike_t = []
 
     # before and after padding
-    before_t = 0.06
-    after_t = 0.06
+    before_t = 0.15
+    after_t = 0.15
 
     # go through all chirp repros
     for repro in chirp_repros:
@@ -915,8 +1043,8 @@ def hompopulation_bts(data):
     spike_t = []
 
     # padding around beat
-    before_t = 0.06
-    after_t = 0.06
+    before_t = 0.15
+    after_t = 0.15
 
     # find all chirp repros
     chirp_repros = [i for i in data.repros if "Chirps" in i]

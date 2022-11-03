@@ -147,18 +147,31 @@ for i in range(chirps.stimulus_count):
         c_spikes_centered_single = c_time[c_spike_indices_single]
 
         # append centered spike times to list
-        spike_t.append(c_spikes_centered)
-        spike_t_bursts.append(c_spikes_centered_bursts)
-        spike_t_single.append(c_spikes_centered_single)
+        spike_t.append(len(c_spikes_centered))
+        spike_t_bursts.append(len(c_spikes_centered_bursts))
+        spike_t_single.append(len(c_spikes_centered_single))
         # spike_t.append(c_time)
         centerchirp.append(c_env)
 
 
 # adding bar plot 
+mean_spike_t = np.mean(spike_t)
+mean_spike_t_single = np.mean(spike_t_single)
+mean_spike_t_bursts = np.mean(spike_t_bursts)
+
+std_spike_t =        np.std(spike_t)
+std_spike_t_single = np.std(spike_t_single)
+std_spike_t_bursts = np.std(spike_t_bursts)
+
+
+
 fig, ax = plt.subplots(figsize=(16 * ps.cm, 12 * ps.cm))
-ax.bar(1, len(fs.flatten(spike_t)),       )
-ax.bar(2, len(fs.flatten(spike_t_single)),)
-ax.bar(3, len(fs.flatten(spike_t_bursts)),)
+ax.errorbar(1, mean_spike_t,        yerr=std_spike_t,       color=  ps.gblue1)
+ax.bar(1, mean_spike_t,         color=  ps.gblue1)
+ax.errorbar(2, mean_spike_t_single, yerr=std_spike_t_single,color=  ps.gblue2)
+ax.bar(2, mean_spike_t_single,color=  ps.gblue2)
+ax.errorbar(3, mean_spike_t_bursts, yerr=std_spike_t_bursts,color=  ps.gblue3)
+ax.bar(3, mean_spike_t_bursts,color=  ps.gblue3)
 plt.legend(loc='upper right', bbox_to_anchor=(0.99, 0.99))
 ax.set_xticks([1,2,3])
 ax.set_xticklabels(["All Spikes", "Single", "Bursts"])
