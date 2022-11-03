@@ -27,6 +27,9 @@ def PlotStyle(darkmode=False):
         yellow = "#E9C46A"
         orange = "#F4A261"
         red = "#E86051"
+        gblue1 = "#1a5b92"
+        gblue2 = "#04a6c2"
+        gblue3 = "#3fc1c0"
 
         @classmethod
         def lims(cls, track1, track2):
