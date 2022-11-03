@@ -163,10 +163,8 @@ def isis(spike_times):
         Interspike intervals
     """
 
-    isiarray = []
-    for times in spike_times:
-        difftimes = np.diff(times)
-        isiarray.append(difftimes)
+  
+    isiarray = np.diff(spike_times)
 
     return isiarray
 
@@ -217,7 +215,7 @@ def plot_isih(ax, isis, binwidth):
     # basic statistics
     sdisi = np.std(isis)
     cv = sdisi / misi
-    ax.bar(centers * 1000, pdf, width=binwidth * 1000)  # plot histogram with ISIs in ms
+    ax.bar(centers * 1000, pdf, width=binwidth * 1000, color=ps.darkblue)  # plot histogram with ISIs in ms
 
     ax.set_xlabel("Interspike interval [ms]")
     ax.set_ylabel("p(ISI) [1/s]")
@@ -230,9 +228,9 @@ def plot_isih(ax, isis, binwidth):
     # Subscripts are introduced by '_' and are enclosed in curly brackets.
     # Since we are in an f-string we need to double the curly brackets.
 
-    ax.text(0.8, 0.9, rf"$\mu_{{ISI}}={misi*1000:.1f}$ms", transform=ax.transAxes)
-    ax.text(0.8, 0.8, rf"$\sigma_{{ISI}}={sdisi*1000:.1f}$ms", transform=ax.transAxes)
-    ax.text(0.8, 0.7, rf"CV={cv:.2f}", transform=ax.transAxes)
+    ax.text(0.75, 0.9, rf"$\mu_{{ISI}} = {misi*1000:.1f}$ms", transform=ax.transAxes)
+    ax.text(0.75, 0.8, rf"$\sigma_{{ISI}} = {sdisi*1000:.1f}$ms", transform=ax.transAxes)
+    ax.text(0.75, 0.7, rf"CV = {cv:.2f}", transform=ax.transAxes)
 
 
 def isi_serialcorr(isis, max_lag=10):
