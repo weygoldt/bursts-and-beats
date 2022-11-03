@@ -21,6 +21,13 @@ ram.stimulus_folder = "../data/stimulus/"
 s, t = ram.load_stimulus()
 eodf_fisch = d.metadata["Recording"]["Subject"]["EOD Frequency"][0]
 
+# convert s to actual unit
+ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")
+stim_contrast = 0.2
+sdt_stim = stim_contrast * ampl
+ist_std_stim = 0.3
+s = s * (sdt_stim / ist_std_stim)
+
 # collect data here
 estis_all = []
 estis_s = []
@@ -101,8 +108,8 @@ ax.set_ylabel("Euclidean distance")
 ax.spines["right"].set_visible(False)
 ax.spines["top"].set_visible(False)
 ax.set_xticks(np.arange(1, 2.5, 0.5))
-ax.set_yticks(np.arange(188, 201, 2))
-ax.spines.left.set_bounds((188, 200))
+ax.set_yticks(np.arange(44.3, 47.56, 0.5))
+ax.spines.left.set_bounds((44.3, 47.3))
 ax.spines.bottom.set_bounds((0.8, 2.2))
 
 plt.subplots_adjust(left=0.12, right=1.1, top=0.99, bottom=0.08, hspace=0.2)
@@ -153,13 +160,15 @@ for a in ax[:-1]:
     a.spines["top"].set_visible(False)
     a.spines["bottom"].set_visible(False)
     a.tick_params(bottom=False)
+    a.set_yticks(np.arange(-0.2, 0.3, 0.2))
+    a.spines.left.set_bounds((-0.2, 0.2))
 
 # make axes nicer
 ax[2].spines["right"].set_visible(False)
 ax[2].spines["top"].set_visible(False)
 ax[2].set_xticks(np.arange(0, 205, 25))
-ax[2].set_yticks(np.arange(-1, 1.1, 1))
-ax[2].spines.left.set_bounds((-1, 1))
+ax[2].set_yticks(np.arange(-0.2, 0.3, 0.2))
+ax[2].spines.left.set_bounds((-0.2, 0.2))
 ax[2].spines.bottom.set_bounds((0, 200))
 
 fig.legend(
@@ -169,9 +178,13 @@ fig.legend(
     loc="upper center",
 )
 
-plt.subplots_adjust(left=0.08, right=1, top=0.9, bottom=0.15, hspace=0.2)
+plt.subplots_adjust(left=0.1, right=1, top=0.9, bottom=0.15, hspace=0.2)
 
 fig.supxlabel("Time [ms]", fontsize=14)
 fig.supylabel("Amplitude [mV/cm]", fontsize=14)
 fs.doublesave("../figures/stim_reconstr")
 plt.show()
+
+print(f"N all spikes: {count_a}")
+print(f"N single spikes: {count_s}")
+print(f"N bursts: {count_b}")

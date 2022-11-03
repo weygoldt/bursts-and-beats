@@ -396,13 +396,14 @@ def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
     if start == 0.0:
         start == 1e-10
         rate = len(spikes_window) / (end - start)
-    ax.plot(t, v, c=ps.darkblue)
+    ax.plot(t, v, c=ps.black)
     ax.set_xlabel("Time [s]")
     ax.set_ylabel("Membrane voltage [mV]")
     ax.scatter(
         spikes,
-        np.ones_like(spikes) * np.max(v) + 3,
+        np.ones_like(spikes) * np.max(v) + 9,
         label=f"n Spikes: {len(spikes_window)}",
+        c="#03045e",
     )
     ax.set_xlim(start, end)
     ax.text(0.05, 1.01, f"Spike Rate: {rate} Hz", transform=ax.transAxes)
@@ -416,9 +417,9 @@ def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
         )[0]
         ax.scatter(
             spikes[flatten(burst_spikes)],
-            np.ones_like(spikes[flatten(burst_spikes)]) * np.max(v) + 9,
+            np.ones_like(spikes[flatten(burst_spikes)]) * np.max(v) + 3,
             label=f"n Bursts: {len(burst_spikes_fenster)}",
-            c="k",
+            c="#caf0f8",
         )
     if single == True:
         single_spikes_fenster = np.where(
@@ -428,7 +429,7 @@ def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
             spikes[single_spikes],
             np.ones_like(spikes[single_spikes]) * np.max(v) + 6,
             label=f"n Single: {len(single_spikes_fenster)}",
-            c="blue",
+            c="#00b4d8",
         )
 
     ax.legend(loc="upper left", bbox_to_anchor=(0.5, 1.1), ncol=2, markerscale=1.5)
