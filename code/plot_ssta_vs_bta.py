@@ -57,8 +57,16 @@ def singlespike_triggered_stim(ram):
     mean_sds = np.array(np.std(stas, axis=0))
 
     # normalize
-    mean_stas = mean_stas * 0.2 * eodf_fisch
-    mean_sds = mean_sds * 0.2 * eodf_fisch
+    ampl = ram[0].feature_data('gwn300Hz50s0-1_amplitude')
+    stim_contrast = 0.2
+    sdt_stim = stim_contrast * ampl 
+    ist_std_stim = 0.3
+    contrast =  ist_std_stim * (sdt_stim/ist_std_stim)
+    mean_stas = np.array(np.mean(stas, axis=0))
+    mean_sds = np.array(np.std(stas, axis=0))
+    mean_stas = mean_stas * contrast
+    mean_sds = mean_sds   * contrast
+
 
     return time, mean_stas, mean_sds
 
@@ -96,10 +104,15 @@ def burst_triggered_stim(ram):
         spike_times.append(spikes)
         sds.append(sd)
 
+    ampl = ram[0].feature_data('gwn300Hz50s0-1_amplitude')
+    stim_contrast = 0.2
+    sdt_stim = stim_contrast * ampl 
+    ist_std_stim = 0.3
+    contrast =  ist_std_stim * (sdt_stim/ist_std_stim)
     mean_stas = np.array(np.mean(stas, axis=0))
     mean_sds = np.array(np.std(stas, axis=0))
-    mean_stas = mean_stas * 0.2 * eodf_fisch
-    mean_sds = mean_sds * 0.2 * eodf_fisch
+    mean_stas = mean_stas * contrast
+    mean_sds = mean_sds   * contrast
 
     return time, mean_stas, mean_sds
 
@@ -140,23 +153,23 @@ ax[1].plot(s_time * 1000, s_mean + s_std, c="darkgray", lw=1)
 for a in ax:
 
     # add guidelines
-    # a.hlines(0, -25, 25, linestyles="dashed", color="k", lw=1)
-    # a.vlines(0, 30, -40, linestyles="dashed", color="k", lw=1)
+    a.hlines(0, -25, 25, linestyles="dashed", color="k", lw=1)
+    a.vlines(0, 30, -40, linestyles="dashed", color="k", lw=1)
 
     # remove upper and right axis
     a.spines["right"].set_visible(False)
     a.spines["top"].set_visible(False)
 
-    # make axes nicer
-    a.set_xticks(np.append(np.arange(0, 25, 10) - 20, np.arange(0, 30, 10)))
-    a.set_yticks(np.arange(-40, 35, 10))
-    a.spines.left.set_bounds((-40, 30))
-    a.spines.bottom.set_bounds((-25, 25))
+    ## make axes nicer
+    #a.set_xticks(np.append(np.arange(0, 25, 10) - 20, np.arange(0, 30, 10)))
+    #a.set_yticks(np.arange(-40, 35, 10))
+    #a.spines.left.set_bounds((-40, 30))
+    #a.spines.bottom.set_bounds((-25, 25))
 
 fig.supxlabel("Spike centered time [ms]", fontsize=14, x=0.552, y=0.009)
-fig.supylabel("Average stimulus", fontsize=14, x=0.02, y=0.6)
+fig.supylabel("Average stimulus [mV/cm]", fontsize=14, x=0.02, y=0.6)
 
 plt.subplots_adjust(left=0.12, right=0.99, top=0.99, bottom=0.14, hspace=0, wspace=0.1)
-fs.doublesave("../figures/ssta_vs_bta")
+#fs.doublesave("../figures/ssta_vs_bta")
 
 plt.show()

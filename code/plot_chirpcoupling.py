@@ -18,7 +18,7 @@ reodfs = fs.sort_reodfs(d)
 
 # get all chirp repros with multiple of 1
 chirp_repros = [reodfs[key][0] for key in reodfs if int(float(key)) == 1]
-chirp_repro = chirp_repros[0]
+chirp_repro = chirp_repros[1]
 chirps = d[chirp_repro]
 
 # collect data here
@@ -233,5 +233,5 @@ if saveplot:
     # adjust plot margings
     plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0.1)
 
-    fs.doublesave(f"../figures/chirp_triggered_spikes_{chirps.relative_eodf}")
+    #fs.doublesave(f"../figures/chirp_triggered_spikes_{chirps.relative_eodf}")
     plt.show()
