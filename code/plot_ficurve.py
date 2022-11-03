@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
-from IPython import embedfrom tqdm import tqdm
+from IPython import embed
+from tqdm import tqdm
 
 import functions as fs
 from plotstyle import PlotStyle
