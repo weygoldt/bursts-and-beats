@@ -18,7 +18,15 @@ eod_send = 1 * np.sin(2 * np.pi * eodf_send * time)
 beat, envelope, envelope_time = fs.beat_envelope(eod_send, eod_rec, 500, eodf_rec, time)
 
 # plot
-fig, ax = plt.subplots(3, 1, sharex=True, figsize=(8, 5.5))
+fig, ax = plt.subplots(
+    3,
+    1,
+    sharex=True,
+    figsize=(16 * ps.cm, 12 * ps.cm),
+    gridspec_kw={"height_ratios": [1, 1, 2]},
+)
+
+plt.subplots_adjust(wspace=0.2)
 ax[0].plot(time, eod_send, lw=1, c="k")
 ax[1].plot(time, eod_rec, lw=1, c="k")
 ax[2].plot(time, beat, lw=1, c="k")

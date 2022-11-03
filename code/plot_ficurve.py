@@ -1,14 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
-
+from IPython import embed
 import functions as fs
 from plotstyle import PlotStyle
 
 ps = PlotStyle()
 
 # get data
-d = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
+d = rlx.Dataset("data/2022-10-27-aa-invivo-1.nix")
 
 # find contrast
 fi = d["FICurve_1"]
@@ -85,6 +85,7 @@ rate_stds = np.array(rate_stds)
 r = np.array([mean_rates[key][0] for key in mean_rates])
 c = np.array([key for key in mean_rates])
 
+
 fig, ax = plt.subplots(figsize=(16 * ps.cm, 12 * ps.cm))
 ax.errorbar(c, r, yerr=rate_stds, fmt="-o", color=ps.black, capsize=2)
 
@@ -108,5 +109,5 @@ plt.subplots_adjust(left=0.1, right=1, top=0.98, bottom=0.12, hspace=0)
 # set labels and save to file
 ax.set_ylabel("Firing rate [Hz]")
 ax.set_xlabel("Contrast [%]")
-fs.doublesave("../figures/ficurve")
+#fs.doublesave("../figures/ficurve")
 plt.show()
