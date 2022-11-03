@@ -153,6 +153,16 @@ for i in range(chirps.stimulus_count):
         # spike_t.append(c_time)
         centerchirp.append(c_env)
 
- 
+
+# adding bar plot 
+fig, ax = plt.subplots(figsize=(16 * ps.cm, 12 * ps.cm))
+ax.bar(1, len(fs.flatten(spike_t)),       )
+ax.bar(2, len(fs.flatten(spike_t_single)),)
+ax.bar(3, len(fs.flatten(spike_t_bursts)),)
+plt.legend(loc='upper right', bbox_to_anchor=(0.99, 0.99))
+ax.set_xticks([1,2,3])
+ax.set_xticklabels(["All Spikes", "Single", "Bursts"])
+ax.set_ylabel("Counts of Spikes")
+plt.show()
 embed()
 exit()
