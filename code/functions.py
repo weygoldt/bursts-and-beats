@@ -418,7 +418,7 @@ def plot_baseline(ax, data, start=0.0, end=1.0, burst=False, single=False):
                     label=f"n Single: {len(single_spikes_fenster)}", 
                     c="blue")
     
-    ax.legend(loc='upper left', bbox_to_anchor=(0.5, 1.1),ncol=2 , markerscale=1.5)
+    ax.legend(loc='upper left', bbox_to_anchor=(0.5, 1.15),ncol=2 , markerscale=1.5)
     
     
 

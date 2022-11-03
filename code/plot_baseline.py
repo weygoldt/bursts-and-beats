@@ -33,6 +33,5 @@ fig3, ax3 = plt.subplots(figsize=(figsize_x, figsize_y))
 fs.plot_baseline(ax3, d, end=1, burst=True, single=True)
 fs.doublesave("../figures/burst_activity_close")
  
-
-
+plt.show()
 
