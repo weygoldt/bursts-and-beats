@@ -92,12 +92,18 @@ jit_x2 = np.random.normal(height1, jitter_width, size=len(euc_s))
 jit_x3 = np.random.normal(height1, jitter_width, size=len(euc_b))
 
 fig, ax = plt.subplots(figsize=(16 * ps.cm, 12 * ps.cm))
-bp = ax.boxplot([euc_a, euc_s, euc_b], positions=[1.1, 1.6, 2.1], showfliers=False)
+bp = ax.boxplot([euc_a, euc_s, euc_b], positions=[1.1, 1.6, 2.1], showfliers=False, patch_artist=True)
 for median in bp["medians"]:
     median.set_color("black")
-ax.scatter(jit_x1 + 0.9, euc_a, marker=".", color=ps.black)
-ax.scatter(jit_x2 + 1.4, euc_s, marker=".", color=ps.black)
-ax.scatter(jit_x3 + 1.9, euc_b, marker=".", color=ps.black)
+
+colors = [ps.gblue1, ps.gblue2, ps.gblue3]
+for plot in bp:
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color) 
+
+ax.scatter(jit_x1 + 0.9, euc_a, marker=".", color=ps.gblue1)
+ax.scatter(jit_x2 + 1.4, euc_s, marker=".", color=ps.gblue2)
+ax.scatter(jit_x3 + 1.9, euc_b, marker=".", color=ps.gblue3)
 
 ticks = [1, 1.5, 2]
 labels = ["All spikes", "Single spikes", "Burst"]
