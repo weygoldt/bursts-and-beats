@@ -19,7 +19,7 @@ isis1 = fs.isis(spike_times_bl1)
 
 fig1, ax1 = plt.subplots(figsize=(16 * ps.cm, 12 * ps.cm))
 fs.plot_isih(ax1, isis1, binwidth=0.009)
-ax1.vlines(10, 0, 70, colors='red' , linewidth=3)
+#ax1.vlines(10, 0, 70, colors='red' , linewidth=3)
 ax1.spines["right"].set_visible(False)
 ax1.spines["top"].set_visible(False)
 ax1.set_xlim([0, 400])
