@@ -11,7 +11,7 @@ ps = PlotStyle()
 
 # get data
 d1 = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
-d2 = rlx.Dataset("../data/data_2021/2021-11-11-af-invivo-1.nix")
+d2 = rlx.Dataset("../data/2021-11-11-af-invivo-1.nix")
 
 data = [d1, d2]
 spike_data = []
