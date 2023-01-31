@@ -1,10 +1,5 @@
-import datetime
-import os
 
-import cmocean
-import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import numpy as np
 from cmocean import cm
 from matplotlib.colors import ListedColormap
@@ -62,25 +57,6 @@ def PlotStyle(darkmode=False):
             return lower, upper
 
         @classmethod
-        def fancy_title(cls, axis, title):
-            if " " in title:
-                split_title = title.split(" ", 1)
-                axis.set(
-                    title=r"$\bf{{{}}}$".format(split_title[0]) + f" {split_title[1]}"
-                )
-            else:
-                axis.set_title(r"$\bf{{{}}}$".format(title.replace(" ", r"\;")), pad=8)
-
-        @classmethod
-        def fancy_suptitle(cls, fig, title):
-            split_title = title.split(" ", 1)
-            fig.suptitle(
-                r"$\bf{{{}}}$".format(split_title[0]) + f" {split_title[1]}",
-                ha="left",
-                x=0.078,
-            )
-
-        @classmethod
         def circled_annotation(cls, text, axis, xpos, ypos, padding=0.25):
             axis.text(
                 xpos,
@@ -104,14 +80,7 @@ def PlotStyle(darkmode=False):
             return my_cmap
 
         @classmethod
-        def label_subplots(cls, labels, axes, fig):
-            for axis, label in zip(axes, labels):
-                X = axis.get_position().x0
-                Y = axis.get_position().y1
-                fig.text(X, Y, label, weight="bold")
-
-        @classmethod
-        def hide_helper_xax(cls, ax):
+        def hide_ax(cls, ax):
             ax.xaxis.set_visible(False)
             plt.setp(ax.spines.values(), visible=False)
             ax.tick_params(left=False, labelleft=False)
@@ -123,6 +92,13 @@ def PlotStyle(darkmode=False):
             plt.setp(bp["whiskers"], color=color)
             plt.setp(bp["caps"], color=color)
             plt.setp(bp["medians"], color=color)
+
+        @classmethod
+        def label_subplots(cls, labels, axes, fig):
+            for axis, label in zip(axes, labels):
+                X = axis.get_position().x0
+                Y = axis.get_position().y1
+                fig.text(X, Y, label, weight="bold")
 
         @classmethod
         def letter_subplots(
@@ -214,10 +190,6 @@ def PlotStyle(darkmode=False):
 
         pass
 
-    c1 = "#7D96B0"
-    c2 = "#8CB78D"
-    c3 = "#94C0C0"
-
     # rcparams text setup
     SMALL_SIZE = 12
     MEDIUM_SIZE = 14
@@ -234,7 +206,6 @@ def PlotStyle(darkmode=False):
 
     # plt.rcParams["image.cmap"] = s.lightcmap
     plt.rcParams["axes.xmargin"] = 0.1
-    # plt.rcParams["figure.constrained_layout.use"] = True
     plt.rcParams["axes.ymargin"] = 0.15
     plt.rcParams["axes.titlelocation"] = "center"
     plt.rcParams["axes.titlesize"] = BIGGER_SIZE
