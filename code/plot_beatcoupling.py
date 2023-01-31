@@ -12,7 +12,7 @@ ps = PlotStyle()
 data = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 sams = [i for i in data.repros if "SAM" in i]
 sams = sams[2:]
-sam = sams[1]
+sam = sams[2]
 samd = data[sam]
 spikes = samd.trace_data("Spikes-1")[0]
 beat, time = samd.trace_data("LocalEOD-1")
@@ -202,5 +202,5 @@ ax[1].xaxis.set_label_coords(0.5, -0.2)
 plt.subplots_adjust(left=0.08, right=0.99, top=0.99, bottom=0.15, hspace=0)
 
 # save figures
-fs.doublesave("../figures/beatcoupling_1")
+fs.doublesave("../figures/beatcoupling_2")
 plt.show()
