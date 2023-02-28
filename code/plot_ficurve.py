@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import rlxnix as rlx
-from IPython import embedfrom tqdm import tqdm
+from IPython import embed
+from tqdm import tqdm
+
 
 import functions as fs
 from plotstyle import PlotStyle
@@ -76,7 +78,8 @@ for key in tqdm(sorted_trials):
     mean_rates[key].append(np.mean(rate_per_contrast))
 
 rate_stds = []
-
+embed()
+exit()
 for i in rates:
     contrast = i
     std = np.std(rates[i][0])

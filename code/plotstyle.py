@@ -66,10 +66,12 @@ def PlotStyle(darkmode=False):
             if " " in title:
                 split_title = title.split(" ", 1)
                 axis.set(
-                    title=r"$\bf{{{}}}$".format(split_title[0]) + f" {split_title[1]}"
+                    title=r"$\bf{{{}}}$".format(
+                        split_title[0]) + f" {split_title[1]}"
                 )
             else:
-                axis.set_title(r"$\bf{{{}}}$".format(title.replace(" ", r"\;")), pad=8)
+                axis.set_title(r"$\bf{{{}}}$".format(
+                    title.replace(" ", r"\;")), pad=8)
 
         @classmethod
         def fancy_suptitle(cls, fig, title):
@@ -249,8 +251,8 @@ def PlotStyle(darkmode=False):
     plt.rcParams["legend.fancybox"] = False
 
     # specify the custom font to use
-    plt.rcParams["font.family"] = "sans-serif"
-    plt.rcParams["font.sans-serif"] = "Helvetica Now Text"
+    # plt.rcParams["font.family"] = "sans-serif"
+    # plt.rcParams["font.sans-serif"] = "Helvetica Now Text"
     return s
 
 

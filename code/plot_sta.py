@@ -20,6 +20,8 @@ stimulie_rlx = ram.stimuli
 # load file stimulie from folder
 ram.stimulus_folder = "../data/stimulus/"
 s, t = ram.load_stimulus()
+embed()
+exit()
 
 # convert s to actual unit
 ampl = ram[0].feature_data("gwn300Hz50s0-1_amplitude")

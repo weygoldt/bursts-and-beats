@@ -12,7 +12,7 @@ ps = PlotStyle()
 data = rlx.Dataset("../data/2022-10-27-aa-invivo-1.nix")
 sams = [i for i in data.repros if "SAM" in i]
 sams = sams[2:]
-sam = sams[2]
+sam = sams[3]
 samd = data[sam]
 spikes = samd.trace_data("Spikes-1")[0]
 beat, time = samd.trace_data("LocalEOD-1")
@@ -132,6 +132,7 @@ fig, ax = plt.subplots(2, 1, figsize=(24 * ps.cm, 12 * ps.cm), sharex=True)
 # plot envelopes
 for e in envs:
     ax[0].plot(envs_ts * 1000, e, c="darkgrey", alpha=0.1)
+print(len(envs_ts))
 
 # plot mean envelope
 ax[0].plot(envs_ts * 1000, meanbeat, color=ps.black)
