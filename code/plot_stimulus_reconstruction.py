@@ -1,4 +1,4 @@
-import random
+fmport random
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -99,7 +99,7 @@ for median in bp["medians"]:
 colors = [ps.gblue1, ps.gblue2, ps.gblue3]
 for plot in bp:
     for patch, color in zip(bp['boxes'], colors):
-        patch.set_facecolor(color) 
+        patch.set_facecolor(color)
 
 ax.scatter(jit_x1 + 0.9, euc_a, marker=".", color=ps.gblue1)
 ax.scatter(jit_x2 + 1.4, euc_s, marker=".", color=ps.gblue2)

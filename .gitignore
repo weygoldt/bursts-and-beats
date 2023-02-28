@@ -4,6 +4,9 @@
 # Self added stuff
 data/*
 stimuli/*
+slideshow/*
+paper/*
+.DS_Store
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
